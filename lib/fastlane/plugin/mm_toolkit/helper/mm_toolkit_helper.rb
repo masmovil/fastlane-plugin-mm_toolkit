@@ -1,4 +1,5 @@
-require 'fastlane_core/ui/ui'
+# frozen_string_literal: true
+require "fastlane_core/ui/ui"
 
 module Fastlane
   UI = FastlaneCore::UI unless Fastlane.const_defined?("UI")
