@@ -35,3 +35,16 @@ If you want to use it, do:
 ```sh
 bundle exec pry
 ```
+
+### Working with `fastlane`
+
+#### Actions' operations
+We can check the help for a given action using
+```sh
+bundle exec fastlane action action_name
+```
+
+We can execute the actions directly in the repo with the following command
+```sh
+bundle exec fastlane run action_name param1:value1 param2:value2 ...
+```
