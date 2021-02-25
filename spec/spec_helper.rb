@@ -1,6 +1,7 @@
-$LOAD_PATH.unshift(File.expand_path('../../lib', __FILE__))
+# frozen_string_literal: true
+$LOAD_PATH.unshift(File.expand_path("../../lib", __FILE__))
 
-require 'simplecov'
+require "simplecov"
 
 # SimpleCov.minimum_coverage 95
 SimpleCov.start
@@ -9,7 +10,7 @@ SimpleCov.start
 module SpecHelper
 end
 
-require 'fastlane' # to import the Action super class
-require 'fastlane/plugin/mm_toolkit' # import the actual plugin
+require "fastlane" # to import the Action super class
+require "fastlane/plugin/mm_toolkit" # import the actual plugin
 
 Fastlane.load_actions # load other actions (in case your plugin calls other actions or shared values)

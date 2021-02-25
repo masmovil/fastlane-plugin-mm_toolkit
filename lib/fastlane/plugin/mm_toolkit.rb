@@ -1,10 +1,11 @@
-require 'fastlane/plugin/mm_toolkit/version'
+# frozen_string_literal: true
+require "fastlane/plugin/mm_toolkit/version"
 
 module Fastlane
   module MmToolkit
     # Return all .rb files inside the "actions" and "helper" directory
     def self.all_classes
-      Dir[File.expand_path('**/{actions,helper}/*.rb', File.dirname(__FILE__))]
+      Dir[File.expand_path("**/{actions,helper}/*.rb", File.dirname(__FILE__))]
     end
   end
 end
