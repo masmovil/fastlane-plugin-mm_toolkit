@@ -2,80 +2,114 @@
 module Fastlane
   module Actions
     module SharedValues
-      TAG_TRAIN_HEAD_TAGGED = :TAG_TRAIN_HEAD_TAGGED
+      TAG_TRAIN_HEAD_ALREADY_TAGGED = :TAG_TRAIN_HEAD_ALREADY_TAGGED
       TAG_TRAIN_NEW_TAG_CREATED = :TAG_TRAIN_NEW_TAG_CREATED
-      TAG_TRAIN_VERSION_NUMBER = :TAG_TRAIN_VERSION_NUMBER
-      TAG_TRAIN_BUILD_NUMBER = :TAG_TRAIN_BUILD_NUMBER
+      TAG_TRAIN_LATEST_VERSION = :TAG_TRAIN_LATEST_VERSION
+      TAG_TRAIN_LATEST_TAG = :TAG_TRAIN_LATEST_TAG
+      TAG_TRAIN_COMMIT_COUNT = :TAG_TRAIN_COMMIT_COUNT
+      TAG_TRAIN_YEAR = :TAG_TRAIN_YEAR
+      TAG_TRAIN_WEEK_OF_YEAR = :TAG_TRAIN_WEEK_OF_YEAR
     end
 
     class TagTrainAction < Action
       def self.run(params)
-        UI.message("Reading current tags...")
-        version_number = get_tag_from_git
-        build_number = get_commit_count_from_git
+        UI.message("Reading current tags…")
+        latest_version = get_version_from_latest_git_tag_from_branch
         head_tag = get_head_tag_from_git
-        version_week = get_version_by_week_of_year
-        head_tagged = false
-        new_tag = false
+        week_data = get_week_data
+        weekly_version = get_weekly_version
+
+        head_already_tagged = false
+        new_tag_created = false
+        latest_tag = ""
+        output_year = nil
+        output_week_of_year = nil
 
         UI.header("Tag analysis")
-        if head_tag != ""
-          head_tagged = true
-          UI.important("Head is tagged as #{head_tag}, this mean that no new commit are pushed")
-        elsif Gem::Version.new(version_number) < Gem::Version.new(version_week)
-          if params[:skip_new_tag_creation]
-            UI.important("Be careful, a new tag should have been created, but the configuration forbids it.")
-          else
-            new_tag = true
-            UI.success("Creating v#{version_week}...")
-            sh("git tag v#{version_week} HEAD")
-            version_number = version_week
-            UI.message("done!")
+        if !head_tag.empty?
+          head_already_tagged = true
+          latest_tag = head_tag
+
+          UI.important("HEAD is already tagged as #{head_tag}, no new tag is needed")
+        elsif Gem::Version.new(latest_version) < Gem::Version.new(weekly_version)
+          new_tag_created = true
+          latest_tag = "v#{weekly_version}"
+          latest_version = weekly_version
+          output_year = week_data[:year].to_i
+          output_week_of_year = week_data[:week_of_year].to_i
+
+          if params[:create_new_commit]
+            UI.message("Creating new commit to set the weekly tag…")
+
+            other_action.ensure_git_status_clean
+            create_weekly_commit(output_week_of_year)
           end
+
+          other_action.add_git_tag(
+            tag: latest_tag,
+            message: "Happy week #{output_week_of_year}!"
+          )
+
+          UI.success("New tag #{latest_tag} created!")
         else
+          latest_tag = "v#{latest_version}"
           UI.important("No new tag is needed, we are on the correct train 🚂")
         end
 
-        UI.success("Using v#{version_number} (#{build_number})")
+        commit_count = get_commit_count_in_head_from_git
 
-        Actions.lane_context[SharedValues::TAG_TRAIN_HEAD_TAGGED] = head_tagged
-        Actions.lane_context[SharedValues::TAG_TRAIN_NEW_TAG_CREATED] = new_tag
-        Actions.lane_context[SharedValues::TAG_TRAIN_VERSION_NUMBER] = version_number
-        Actions.lane_context[SharedValues::TAG_TRAIN_BUILD_NUMBER] = build_number
+        UI.success("Using #{latest_tag} (#{commit_count})")
+
+        Actions.lane_context[SharedValues::TAG_TRAIN_HEAD_ALREADY_TAGGED] = head_already_tagged
+        Actions.lane_context[SharedValues::TAG_TRAIN_NEW_TAG_CREATED] = new_tag_created
+        Actions.lane_context[SharedValues::TAG_TRAIN_LATEST_VERSION] = latest_version
+        Actions.lane_context[SharedValues::TAG_TRAIN_LATEST_TAG] = latest_tag
+        Actions.lane_context[SharedValues::TAG_TRAIN_COMMIT_COUNT] = commit_count
+        Actions.lane_context[SharedValues::TAG_TRAIN_YEAR] = output_year
+        Actions.lane_context[SharedValues::TAG_TRAIN_WEEK_OF_YEAR] = output_week_of_year
+
+        {
+          new_tag_created: new_tag_created,
+          latest_version: latest_version,
+          commit_count: commit_count,
+          year: output_year,
+          week_of_year: output_week_of_year,
+        }
       end
 
       #####################################################
       # @!group support functions
       #####################################################
 
-      def self.get_version_by_week_of_year
+      def self.get_week_data
         date = Date.today
         # Using ISO-8601 week-based year and week number.
-        week_of_year = date.strftime("%V").to_i
-        year_two_dig = date.strftime("%g").to_i
+        two_digit_year = date.strftime("%g").to_i
+        two_digit_week_of_year = date.strftime("%V").to_i
 
-        "#{year_two_dig}.#{week_of_year}"
+        { year: two_digit_year, week_of_year: two_digit_week_of_year }
       end
 
-      def self.get_tag_from_git
-        version_number = sh("git describe --tags --abbrev=0")
-        version_number.gsub!(/[v\r\n]/, "")
+      def self.get_weekly_version
+        week_data = get_week_data
 
-        version_number
+        "#{week_data[:year]}.#{week_data[:week_of_year]}.0"
       end
 
-      def self.get_commit_count_from_git
-        build_number = sh("git rev-list --count HEAD")
-        build_number.gsub!(/[\r\n]/, "")
+      def self.get_version_from_latest_git_tag_from_branch
+        Actions.get_latest_version_from_branch
+      end
 
-        build_number
+      def self.get_commit_count_in_head_from_git
+        other_action.number_of_commits
       end
 
       def self.get_head_tag_from_git
-        head_tag = sh("git tag --contains HEAD")
-        head_tag.gsub!(/[\r\n]/, "")
+        sh("git tag --contains HEAD").strip
+      end
 
-        head_tag
+      def self.create_weekly_commit(week_number)
+        sh("git commit -m \"Happy week #{week_number}!\" --allow-empty --no-verify")
       end
 
       #####################################################
@@ -83,38 +117,77 @@ module Fastlane
       #####################################################
 
       def self.description
-        "Read and control tag for current version system"
+        "Generate weekly-based tags in your git repository suitable for release trains"
       end
 
       def self.details
-        "Read and control tag for current version system"
+        "The action generates tags based on the week of the year. The syntax of the generated tags (and the tags the action expect "\
+        "as input) is as follows: "\
+        "\nv[two_digit_year].[two_digit_week].0"\
+        "\nThe tag conforms to ISO-8601 standard to calculate weeks between a year: this means that the first week of the year will be "\
+        "the one that contains the first Thursday"
       end
 
       def self.available_options
         [
-          FastlaneCore::ConfigItem.new(key: :skip_new_tag_creation,
-                                         env_name: "TAG_TRAIN_SKIP_NEW_TAG_CREATION",
-                                         description: "Skip the creation of new tag if the current is not valid",
-                                         is_string: false,
-                                         default_value: false),
+          FastlaneCore::ConfigItem.new(key: :create_new_commit,
+                                      env_name: "FL_TAG_TRAIN_CREATE_NEW_COMMIT",
+                                      description: "If true, creates a new empty commit in the branch to set the new tag to",
+                                      is_string: false,
+                                      default_value: false),
         ]
       end
 
       def self.output
         [
-          ["TAG_TRAIN_HEAD_TAGGED", "True or false indicating if the current HEAD are tagged or not"],
-          ["TAG_TRAIN_NEW_TAG_CREATED", "True or false indicating if a new tag has been created"],
-          ["TAG_TRAIN_VERSION_NUMBER", "App version infered from current tag"],
-          ["TAG_TRAIN_BUILD_NUMBER", "Build version"],
+          ["TAG_TRAIN_HEAD_ALREADY_TAGGED",
+           "True or false indicating if the current HEAD was already tagged before running the action"],
+          ["TAG_TRAIN_NEW_TAG_CREATED",
+           "True or false indicating if a new tag has been created"],
+          ["TAG_TRAIN_LATEST_VERSION",
+           "App version inferred from current tag"],
+          ["TAG_TRAIN_COMMIT_COUNT",
+           "Commit count in the current branch"],
+          ["TAG_TRAIN_YEAR",
+           "Year used in the weekly tag"],
+          ["TAG_TRAIN_WEEK_OF_YEAR",
+           "Week of year used in the weekly tag"],
         ]
       end
 
+      def self.return_type
+        # Check https://github.com/fastlane/fastlane/blob/0d1aa50045d57975d8b9e5d5f1f489d82ee0f437/fastlane/lib/fastlane/action.rb#L23
+        # for available types
+        :hash
+      end
+
+      def self.return_value
+        "The `new_tag_created`, `latest_version`, `commit_count`, `year` and `week_of_year` from which the weekly tag is generated."\
+        "\nIf no new version is tagged, `year` and `week_of_year` will be nil."
+      end
+
       def self.authors
-        ["sebastianvarela"]
+        ["sebastianvarela", "adriangl"]
       end
 
       def self.is_supported?(platform)
-        [:ios, :mac].include?(platform)
+        [:ios, :mac, :android].include?(platform)
+      end
+
+      def self.example_code
+        [
+          '
+            version_hash = tag_train
+            latest_version, commit_count = version_hash.values_at(:latest_version, :commit_count)
+            puts "The latest version is #{latest_version}!"
+            ',
+        ]
+      end
+
+      def self.category
+        # Check https://github.com/fastlane/fastlane/blob/0d1aa50045d57975d8b9e5d5f1f489d82ee0f437/fastlane/lib/fastlane/action.rb#L6
+        # for available categories
+        :source_control
       end
     end
   end

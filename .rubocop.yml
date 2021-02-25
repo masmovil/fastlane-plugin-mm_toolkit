@@ -13,3 +13,7 @@ Naming/PredicateName:
 # are needed.
 Style/StringLiterals:
   EnforcedStyle: double_quotes
+
+Layout/LineLength:
+  Max: 140
+  IgnoredPatterns: ['^\s*#']
