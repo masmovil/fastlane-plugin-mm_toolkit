@@ -3,6 +3,7 @@ module Fastlane
   module Actions
     module SharedValues
       GITHUB_PULL_REQUEST_REMINDER_MESSAGE = :GITHUB_PULL_REQUEST_REMINDER_MESSAGE
+      GITHUB_PULL_REQUEST_AWAITING_REVIEW_NUMBER = :GITHUB_PULL_REQUEST_AWAITING_REVIEW_NUMBER
     end
 
     class GithubPullRequestReminderAction < Action
@@ -12,19 +13,21 @@ module Fastlane
       GITHUB_USERS_AND_MENTIONS_SEPARATOR = ","
       GITHUB_USERS_AND_MENTIONS_REGEX = /^(.+?):(.+?)$/
 
+      extend Helper::GithubUsersAndMentionsHelper
+
       def self.run(params)
         UI.message("Analyzing PRs in #{params[:repo]}…")
 
         pr_data = get_prs_with_pending_reviews(params)
-        prs_awaiting_review_count = pr_data.size
-        UI.important("There are #{prs_awaiting_review_count} PRs awaiting review!")
+        prs_awaiting_review_number = pr_data.size
+        UI.important("There are #{prs_awaiting_review_number} PRs awaiting review!")
 
-        markdown = if prs_awaiting_review_count > 0
+        markdown = if prs_awaiting_review_number > 0
           UI.message("Checking which users have to review PRs…")
           prs_and_pending_reviewers = map_prs_with_pending_reviewers(pr_data)
 
           UI.message("Sorting user logins and mentions…")
-          user_logins_and_mentions_map = parse_github_users_and_mentions(params)
+          user_logins_and_mentions_map = parse_github_users_and_mentions(params[:github_users_and_mentions])
 
           UI.message("Generating Markdown message…")
           generate_markdown(prs_and_pending_reviewers, user_logins_and_mentions_map)
@@ -33,6 +36,7 @@ module Fastlane
         end
 
         Actions.lane_context[SharedValues::GITHUB_PULL_REQUEST_REMINDER_MESSAGE] = markdown
+        Actions.lane_context[SharedValues::GITHUB_PULL_REQUEST_AWAITING_REVIEW_NUMBER] = prs_awaiting_review_number
 
         markdown
       end
@@ -50,8 +54,11 @@ module Fastlane
           path: "/repos/#{params[:repo]}/pulls",
           body: {}
         )[:json]
+        require "pp"
 
-        pr_data.select { |pr| pr[REQUESTED_REVIEWERS_KEY] != 0 || pr[REQUESTED_TEAMS_KEY] != 0 }
+        pp(pr_data)
+
+        pr_data.filter { |pr| !pr[REQUESTED_REVIEWERS_KEY].empty? || !pr[REQUESTED_TEAMS_KEY].empty? }
       end
 
       def self.map_prs_with_pending_reviewers(prs)
@@ -66,16 +73,6 @@ module Fastlane
 
           requested_reviewers_data + requested_teams_data
         end
-      end
-
-      def self.parse_github_users_and_mentions(params)
-        params[:github_users_and_mentions]&.split(GITHUB_USERS_AND_MENTIONS_SEPARATOR)&.flat_map do |github_user_and_mention|
-          github_user_and_mention.scan(GITHUB_USERS_AND_MENTIONS_REGEX).map do |m|
-            github_user = m[0]
-            user_mention = m[1]
-            { github_user => user_mention }
-          end
-        end&.reduce({}, :merge)
       end
 
       def self.generate_markdown(prs_and_pending_reviewers, user_logins_and_mentions_map)
@@ -103,37 +100,38 @@ module Fastlane
       def self.available_options
         [
           FastlaneCore::ConfigItem.new(key: :api_url,
-                                       env_name: "FL_GITHUB_API_URL",
-                                       description: "The GitHub API URL - example: 'https://api.github.com'. Defaults to `$GITHUB_API_URL`",
-                                       is_string: true,
-                                       optional: true,
-                                       default_value: ENV["GITHUB_API_URL"]),
+                                      env_name: "FL_GITHUB_API_URL",
+                                      description:
+                                       "The GitHub API URL - example: 'https://api.github.com'. Defaults to `$GITHUB_API_URL`",
+                                      is_string: true,
+                                      optional: true,
+                                      default_value: ENV["GITHUB_API_URL"]),
           FastlaneCore::ConfigItem.new(key: :api_token,
-                                       env_name: "FL_GITHUB_API_TOKEN",
-                                       description:
-                                        "API Token for GitHub with `repo` scope - generate one at https://github.com/settings/tokens. "\
-                                        "Defaults to `$GITHUB_API_TOKEN`",
-                                       sensitive: true,
-                                       code_gen_sensitive: true,
-                                       is_string: true,
-                                       optional: true,
-                                       default_value: ENV["GITHUB_API_TOKEN"]),
+                                      env_name: "FL_GITHUB_API_TOKEN",
+                                      description:
+                                       "API Token for GitHub with `repo` scope - generate one at https://github.com/settings/tokens. "\
+                                       "Defaults to `$GITHUB_API_TOKEN`",
+                                      sensitive: true,
+                                      code_gen_sensitive: true,
+                                      is_string: true,
+                                      optional: true,
+                                      default_value: ENV["GITHUB_API_TOKEN"]),
           FastlaneCore::ConfigItem.new(key: :repo,
-                                       env_name: "FL_GITHUB_REPOSITORY",
-                                       description:
-                                        "Owner and repository name of the GitHub repo to check - example: octocat/Hello-World. "\
-                                        "Defaults to `$GITHUB_REPOSITORY`",
-                                       default_value: ENV["GITHUB_REPOSITORY"],
-                                       optional: true),
+                                      env_name: "FL_GITHUB_REPOSITORY",
+                                      description:
+                                       "Owner and repository name of the GitHub repo to check - example: octocat/Hello-World. "\
+                                       "Defaults to `$GITHUB_REPOSITORY`",
+                                      default_value: ENV["GITHUB_REPOSITORY"],
+                                      optional: true),
           FastlaneCore::ConfigItem.new(key: :github_users_and_mentions,
-                                       env_name: "FL_GITHUB_USER_MENTIONS",
-                                       description:
-                                        "Mapping of GitHub users to your own messaging system's mention style, "\
-                                        "in a comma separated list of github_user:user_mention elements - "\
-                                        "example: user1:mention1,user2:mention2",
-                                       optional: true,
-                                       is_string: true,
-                                       default_value: ""),
+                                      env_name: "FL_GITHUB_USER_MENTIONS",
+                                      description:
+                                       "Mapping of GitHub users to your own messaging system's mention style, "\
+                                       "in a comma separated list of github_user:user_mention elements - "\
+                                       "example: user1:mention1,user2:mention2",
+                                      optional: true,
+                                      is_string: true,
+                                      default_value: ""),
         ]
       end
 
@@ -141,6 +139,8 @@ module Fastlane
         [
           ["GITHUB_PULL_REQUEST_REMINDER_MESSAGE",
            "The pull request reminder message"],
+          ["GITHUB_PULL_REQUEST_AWAITING_REVIEW_NUMBER",
+           "The number of pull requests awaiting review"],
         ]
       end
 
