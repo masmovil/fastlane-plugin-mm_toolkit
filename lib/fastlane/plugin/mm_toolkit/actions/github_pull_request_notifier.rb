@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 require "json"
-require_relative "../helper/github_users_and_mentions_helper"
 
 module Fastlane
   module Actions
@@ -10,10 +9,6 @@ module Fastlane
     end
 
     class GithubPullRequestNotifierAction < Action
-      extend Helper::GithubUsersAndMentionsHelper
-
-      GITHUB_BASE_URL = "https://github.com/"
-
       HANDLED_GITHUB_EVENTS = ["pull_request", "pull_request_review"]
       HANDLED_GITHUB_PULL_REQUEST_ACTIONS = ["opened", "closed"]
 
@@ -55,7 +50,7 @@ module Fastlane
         when "opened"
           handle_pr_opened(params, pr_event)
         when "closed"
-          handle_pr_closed(prams, pr_event)
+          handle_pr_closed(params, pr_event)
         end
       end
 
@@ -92,10 +87,10 @@ module Fastlane
         pr_owner = pr["user"]
         pr_owner_name = pr_owner["login"]
         pr_relative_url = pr["_links"]["html"]["href"]
-        pr_url = GITHUB_BASE_URL + pr_relative_url.to_s
+        pr_url = Helper::GithubUtilsHelper.compose_github_url(pr_relative_url)
 
         "[#{repository_name}] Pull request opened by #{pr_owner_name}\n"\
-        "[*\##{pr_number} #{pr_title}*](#{pr_url})\n\n"\
+        "[\##{pr_number} #{pr_title}](#{pr_url})\n\n"\
         "#{pr_body}"
       end
 
@@ -129,7 +124,7 @@ module Fastlane
         pr_number = pr["number"]
         pr_title = pr["title"]
         pr_relative_url = pr["_links"]["html"]["href"]
-        pr_url = GITHUB_BASE_URL + pr_relative_url.to_s
+        pr_url = Helper::GithubUtilsHelper.compose_github_url(pr_relative_url)
 
         pr_owner = pr["user"]
         pr_owner_name = pr_owner["login"]
@@ -138,7 +133,7 @@ module Fastlane
 
         pr_closed_verb = pr_merged ? "merged" : "closed"
 
-        "[#{repository_name}] Pull request [*\##{pr_number} #{pr_title}*](#{pr_url}) " + pr_closed_verb + " by #{pr_owner_name}\n"
+        "[#{repository_name}] Pull request [\##{pr_number} #{pr_title}](#{pr_url}) " + pr_closed_verb + " by #{pr_owner_name}\n"
       end
 
       def self.get_pr_review_message(params, pr_event)
@@ -159,8 +154,8 @@ module Fastlane
         pr_owner = pr["user"]
         pr_owner_name = pr_owner["login"]
         pr_relative_url = pr["_links"]["html"]["href"]
-
-        pr_link = GITHUB_BASE_URL + (pr_review_relative_url.empty? ? pr_relative_url : pr_review_relative_url)
+        
+        pr_link = Helper::GithubUtilsHelper.compose_github_url(pr_review_relative_url.empty? ? pr_relative_url : pr_review_relative_url)
 
         # Possible states here: https://docs.github.com/en/graphql/reference/enums#pullrequestreviewstate
         msg = ""
@@ -170,19 +165,19 @@ module Fastlane
         case pr_review_state.downcase
         when "approved"
           msg = "#{pr_review_user_name} approved pull request "\
-                "[*\##{pr_number} #{pr_title}*](#{pr_link}) opened by #{pr_owner_mention}"
+                "[\##{pr_number} #{pr_title}](#{pr_link}) opened by #{pr_owner_mention}"
         when "changes_requested"
           msg = "#{pr_review_user_name} requested changes on pull request"\
-                "[*\##{pr_number} #{pr_title}*](#{pr_link}) opened by #{pr_owner_mention}"
+                "[\##{pr_number} #{pr_title}](#{pr_link}) opened by #{pr_owner_mention}"
         when "commented"
           msg = "#{pr_review_user_name} commented on pull request "\
-                "[*\##{pr_number} #{pr_title}*](#{pr_link}) opened by #{pr_owner_mention}"
+                "[\##{pr_number} #{pr_title}](#{pr_link}) opened by #{pr_owner_mention}"
         when "dismissed"
           msg = "#{pr_owner_name} dismissed pull request review by #{pr_reviewer_mention} on pull request "\
-                "[*\##{pr_number} #{pr_title}*](#{pr_link}) opened by #{pr_owner_mention}"
+                "[\##{pr_number} #{pr_title}](#{pr_link}) opened by #{pr_owner_mention}"
         when "pending"
           msg = "#{pr_reviewer_mention} has a pending pull request review on pull request "\
-                "[*\##{pr_number} #{pr_title}*](#{pr_link}) opened by #{pr_owner_mention}"
+                "[\##{pr_number} #{pr_title}](#{pr_link}) opened by #{pr_owner_mention}"
         end
 
         unless pr_review_body.empty?
@@ -202,7 +197,7 @@ module Fastlane
       end
 
       def self.get_user_mention(params, github_user)
-        github_user_mentions = parse_github_users_and_mentions(params[:github_users_and_mentions])
+        github_user_mentions = Helper::GithubUsersAndMentionsHelper.parse_github_users_and_mentions(params[:github_users_and_mentions])
         github_user_mentions[github_user] || github_user
       end
 
