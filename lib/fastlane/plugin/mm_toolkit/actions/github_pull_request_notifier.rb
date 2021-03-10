@@ -180,7 +180,7 @@ module Fastlane
                 "[\##{pr_number} #{pr_title}](#{pr_link}) opened by #{pr_owner_mention}"
         end
 
-        unless pr_review_body.empty?
+        unless !pr_review_body || pr_review_body.empty?
           msg += "\n> #{pr_review_body}"
         end
 
