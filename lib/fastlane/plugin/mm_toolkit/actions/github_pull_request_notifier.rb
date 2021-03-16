@@ -154,7 +154,7 @@ module Fastlane
         pr_owner = pr["user"]
         pr_owner_name = pr_owner["login"]
         pr_relative_url = pr["_links"]["html"]["href"]
-        
+
         pr_link = Helper::GithubUtilsHelper.compose_github_url(pr_review_relative_url.empty? ? pr_relative_url : pr_review_relative_url)
 
         # Possible states here: https://docs.github.com/en/graphql/reference/enums#pullrequestreviewstate
