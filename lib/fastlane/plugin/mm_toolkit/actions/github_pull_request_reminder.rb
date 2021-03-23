@@ -25,7 +25,8 @@ module Fastlane
           prs_and_pending_reviewers = map_prs_with_pending_reviewers(pr_data)
 
           UI.message("Sorting user logins and mentions…")
-          user_logins_and_mentions_map = Helper::GithubUsersAndMentionsHelper.parse_github_users_and_mentions(params[:github_users_and_mentions])
+          user_logins_and_mentions_map =
+            Helper::GithubUsersAndMentionsHelper.parse_github_users_and_mentions(params[:github_users_and_mentions])
 
           UI.message("Generating Markdown message…")
           generate_markdown(prs_and_pending_reviewers, user_logins_and_mentions_map)
