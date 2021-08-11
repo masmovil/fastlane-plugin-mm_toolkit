@@ -14,6 +14,9 @@ module Fastlane
     class TagTrainAction < Action
       def self.run(params)
         create_new_commit = params.fetch(:create_new_commit)
+        committer_name = params.fetch(:committer_name)
+        committer_email = params.fetch(:committer_email)
+        push_to_repo = params.fetch(:push_to_repo)
 
         UI.message("Reading current tags…")
         latest_version = get_version_from_latest_git_tag_from_branch
@@ -44,6 +47,9 @@ module Fastlane
             UI.message("Creating new commit to set the weekly tag…")
 
             other_action.ensure_git_status_clean
+            sh("git config user.name #{committer_name}")
+            sh("git config user.email #{committer_email}")
+
             create_weekly_commit(output_week_of_year)
           end
 
@@ -53,6 +59,13 @@ module Fastlane
           )
 
           UI.success("New tag #{latest_tag} created!")
+
+          if push_to_repo
+            other_action.push_git_tags(
+              tag: latest_tag
+            )
+            UI.success("New tag pushed to repo")
+          end
         else
           latest_tag = "v#{latest_version}"
           UI.important("No new tag is needed, we are on the correct train 🚂")
@@ -138,6 +151,24 @@ module Fastlane
             type: Boolean,
             optional: true,
             default_value: false),
+          FastlaneCore::ConfigItem.new(key: :push_to_repo,
+            env_name: "FL_TAG_TRAIN_PUSH_TO_REPO",
+            description: "Indicates if the new tag should be pushed to the repo.",
+            type: Boolean,
+            optional: true,
+            default_value: true),
+          FastlaneCore::ConfigItem.new(key: :committer_name,
+            env_name: "FL_TAG_TRAIN_COMMITER_NAME",
+            description: "Indicates the name of the commiter of the tag",
+            type: String,
+            optional: true,
+            default_value: "tag-train"),
+          FastlaneCore::ConfigItem.new(key: :committer_email,
+            env_name: "FL_TAG_TRAIN_COMMITER_EMAIL",
+            description: "Indicates the e-mail of the commiter of the tag",
+            type: String,
+            optional: true,
+            default_value: "tag-train@tag-train.com"),
         ]
       end
 
