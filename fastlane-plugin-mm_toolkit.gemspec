@@ -15,7 +15,7 @@ Gem::Specification.new do |spec|
   spec.homepage      = "https://github.com/masmovil/fastlane-plugin-mm_toolkit"
   spec.license       = "Apache-2.0"
 
-  spec.files         = Dir["lib/**/*"] + %w(README.md LICENSE)
+  spec.files         = Dir["lib/**/*"] + ["README.md", "LICENSE"]
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ["lib"]
 
@@ -25,6 +25,7 @@ Gem::Specification.new do |spec|
   # spec.add_dependency 'your-dependency', '~> 1.0.0'
 
   spec.add_dependency("redcarpet", ">= 3.5.1")
+  spec.add_dependency("addressable", ">= 2.8.0")
 
   spec.add_development_dependency("pry")
   spec.add_development_dependency("bundler")

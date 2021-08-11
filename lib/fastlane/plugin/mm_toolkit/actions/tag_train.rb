@@ -131,27 +131,27 @@ module Fastlane
       def self.available_options
         [
           FastlaneCore::ConfigItem.new(key: :create_new_commit,
-                                      env_name: "FL_TAG_TRAIN_CREATE_NEW_COMMIT",
-                                      description: "If true, creates a new empty commit in the branch to set the new tag to",
-                                      is_string: false,
-                                      default_value: false),
+            env_name: "FL_TAG_TRAIN_CREATE_NEW_COMMIT",
+            description: "If true, creates a new empty commit in the branch to set the new tag to",
+            is_string: false,
+            default_value: false),
         ]
       end
 
       def self.output
         [
           ["TAG_TRAIN_HEAD_ALREADY_TAGGED",
-           "True or false indicating if the current HEAD was already tagged before running the action"],
+           "True or false indicating if the current HEAD was already tagged before running the action",],
           ["TAG_TRAIN_NEW_TAG_CREATED",
-           "True or false indicating if a new tag has been created"],
+           "True or false indicating if a new tag has been created",],
           ["TAG_TRAIN_LATEST_VERSION",
-           "App version inferred from current tag"],
+           "App version inferred from current tag",],
           ["TAG_TRAIN_COMMIT_COUNT",
-           "Commit count in the current branch"],
+           "Commit count in the current branch",],
           ["TAG_TRAIN_YEAR",
-           "Year used in the weekly tag"],
+           "Year used in the weekly tag",],
           ["TAG_TRAIN_WEEK_OF_YEAR",
-           "Week of year used in the weekly tag"],
+           "Week of year used in the weekly tag",],
         ]
       end
 

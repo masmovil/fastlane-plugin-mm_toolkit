@@ -100,51 +100,51 @@ module Fastlane
       def self.available_options
         [
           FastlaneCore::ConfigItem.new(key: :url,
-                                      env_name: "FL_WEBEX_URL",
-                                      description: "Hook URL to a Webex resource to post messages",
-                                      is_string: true,
-                                      sensitive: true,
-                                      optional: false,
-                                      verify_block: proc do |value|
-                                        UI.user_error!("Invalid Webex hook URL") unless value.match?(WEBEX_HOOK_URL_REGEX)
-                                      end),
+            env_name: "FL_WEBEX_URL",
+            description: "Hook URL to a Webex resource to post messages",
+            is_string: true,
+            sensitive: true,
+            optional: false,
+            verify_block: proc do |value|
+              UI.user_error!("Invalid Webex hook URL") unless value.match?(WEBEX_HOOK_URL_REGEX)
+            end),
           FastlaneCore::ConfigItem.new(key: :message,
-                                      env_name: "FL_WEBEX_MESSAGE",
-                                      description:
-                                        "The message that should be displayed on Webex. "\
-                                        "The message should be formatted in Markdown language",
-                                      is_string: true,
-                                      optional: false),
+            env_name: "FL_WEBEX_MESSAGE",
+            description:
+              "The message that should be displayed on Webex. "\
+              "The message should be formatted in Markdown language",
+            is_string: true,
+            optional: false),
           FastlaneCore::ConfigItem.new(key: :message_max_retries,
-                                      env_name: "FL_WEBEX_MESSAGE_MAX_RETRIES",
-                                      description:
-                                        "How many retries we should do if the message sending fails",
-                                      is_string: false,
-                                      optional: true,
-                                      default_value: 3),
+            env_name: "FL_WEBEX_MESSAGE_MAX_RETRIES",
+            description:
+              "How many retries we should do if the message sending fails",
+            is_string: false,
+            optional: true,
+            default_value: 3),
           FastlaneCore::ConfigItem.new(key: :payload,
-                                      env_name: "FL_WEBEX_PAYLOAD",
-                                      description:
-                                        "Add additional information to this message."\
-                                        "The payload must be a hash containing any key with any value",
-                                      is_string: false,
-                                      optional: true,
-                                      default_value: {}),
+            env_name: "FL_WEBEX_PAYLOAD",
+            description:
+              "Add additional information to this message."\
+              "The payload must be a hash containing any key with any value",
+            is_string: false,
+            optional: true,
+            default_value: {}),
           FastlaneCore::ConfigItem.new(key: :success,
-                                      env_name: "FL_WEBEX_SUCCESS",
-                                      description:
-                                        "Was this build successful? (true/false)."\
-                                        "If not specified, no build-related format will be appended to the message",
-                                      is_string: false,
-                                      optional: true,
-                                      default_value: nil),
+            env_name: "FL_WEBEX_SUCCESS",
+            description:
+              "Was this build successful? (true/false)."\
+              "If not specified, no build-related format will be appended to the message",
+            is_string: false,
+            optional: true,
+            default_value: nil),
           FastlaneCore::ConfigItem.new(key: :fail_on_error,
-                                      env_name: "WEBEX_FAIL_ON_ERROR",
-                                      description:
-                                        "Should an error sending the Webex post cause a failure? (true/false)",
-                                      is_string: false,
-                                      optional: true,
-                                      default_value: false),
+            env_name: "WEBEX_FAIL_ON_ERROR",
+            description:
+              "Should an error sending the Webex post cause a failure? (true/false)",
+            is_string: false,
+            optional: true,
+            default_value: false),
         ]
       end
 

@@ -219,31 +219,31 @@ module Fastlane
       def self.available_options
         [
           FastlaneCore::ConfigItem.new(key: :context,
-                                      env_name: "FL_GITHUB_CONTEXT",
-                                      description:
-                                       "The GitHub Actions context."\
-                                       "You must pass it to Fastlane with `${{ toJson(github) }}` in a GitHub action environment variable",
-                                      is_string: true,
-                                      optional: true,
-                                      default_value: ENV["GITHUB_CONTEXT"]),
+            env_name: "FL_GITHUB_CONTEXT",
+            description:
+             "The GitHub Actions context."\
+             "You must pass it to Fastlane with `${{ toJson(github) }}` in a GitHub action environment variable",
+            is_string: true,
+            optional: true,
+            default_value: ENV["GITHUB_CONTEXT"]),
           FastlaneCore::ConfigItem.new(key: :github_users_and_mentions,
-                                      env_name: "FL_GITHUB_USER_MENTIONS",
-                                      description:
-                                       "Mapping of GitHub users to your own messaging system's mention style, "\
-                                       "in a comma separated list of github_user:user_mention elements - "\
-                                       "example: user1:mention1,user2:mention2",
-                                      optional: true,
-                                      is_string: true,
-                                      default_value: ""),
+            env_name: "FL_GITHUB_USER_MENTIONS",
+            description:
+             "Mapping of GitHub users to your own messaging system's mention style, "\
+             "in a comma separated list of github_user:user_mention elements - "\
+             "example: user1:mention1,user2:mention2",
+            optional: true,
+            is_string: true,
+            default_value: ""),
         ]
       end
 
       def self.output
         [
           ["GITHUB_PULL_REQUEST_NOTIFIER_GITHUB_EVENT_NAME",
-           "The name of the triggered pull request event"],
+           "The name of the triggered pull request event",],
           ["GITHUB_PULL_REQUEST_NOTIFIER_GITHUB_EVENT_ACTION",
-           "The name of the triggered pull request event action"],
+           "The name of the triggered pull request event action",],
         ]
       end
 

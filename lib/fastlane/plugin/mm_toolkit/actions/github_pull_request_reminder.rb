@@ -99,47 +99,47 @@ module Fastlane
       def self.available_options
         [
           FastlaneCore::ConfigItem.new(key: :api_url,
-                                      env_name: "FL_GITHUB_API_URL",
-                                      description:
-                                       "The GitHub API URL - example: 'https://api.github.com'. Defaults to `$GITHUB_API_URL`",
-                                      is_string: true,
-                                      optional: true,
-                                      default_value: ENV["GITHUB_API_URL"]),
+            env_name: "FL_GITHUB_API_URL",
+            description:
+             "The GitHub API URL - example: 'https://api.github.com'. Defaults to `$GITHUB_API_URL`",
+            is_string: true,
+            optional: true,
+            default_value: ENV["GITHUB_API_URL"]),
           FastlaneCore::ConfigItem.new(key: :api_token,
-                                      env_name: "FL_GITHUB_API_TOKEN",
-                                      description:
-                                       "API Token for GitHub with `repo` scope - generate one at https://github.com/settings/tokens. "\
-                                       "Defaults to `$GITHUB_API_TOKEN`",
-                                      sensitive: true,
-                                      code_gen_sensitive: true,
-                                      is_string: true,
-                                      optional: true,
-                                      default_value: ENV["GITHUB_API_TOKEN"]),
+            env_name: "FL_GITHUB_API_TOKEN",
+            description:
+             "API Token for GitHub with `repo` scope - generate one at https://github.com/settings/tokens. "\
+             "Defaults to `$GITHUB_API_TOKEN`",
+            sensitive: true,
+            code_gen_sensitive: true,
+            is_string: true,
+            optional: true,
+            default_value: ENV["GITHUB_API_TOKEN"]),
           FastlaneCore::ConfigItem.new(key: :repo,
-                                      env_name: "FL_GITHUB_REPOSITORY",
-                                      description:
-                                       "Owner and repository name of the GitHub repo to check - example: octocat/Hello-World. "\
-                                       "Defaults to `$GITHUB_REPOSITORY`",
-                                      default_value: ENV["GITHUB_REPOSITORY"],
-                                      optional: true),
+            env_name: "FL_GITHUB_REPOSITORY",
+            description:
+             "Owner and repository name of the GitHub repo to check - example: octocat/Hello-World. "\
+             "Defaults to `$GITHUB_REPOSITORY`",
+            default_value: ENV["GITHUB_REPOSITORY"],
+            optional: true),
           FastlaneCore::ConfigItem.new(key: :github_users_and_mentions,
-                                      env_name: "FL_GITHUB_USER_MENTIONS",
-                                      description:
-                                       "Mapping of GitHub users to your own messaging system's mention style, "\
-                                       "in a comma separated list of github_user:user_mention elements - "\
-                                       "example: user1:mention1,user2:mention2",
-                                      optional: true,
-                                      is_string: true,
-                                      default_value: ""),
+            env_name: "FL_GITHUB_USER_MENTIONS",
+            description:
+             "Mapping of GitHub users to your own messaging system's mention style, "\
+             "in a comma separated list of github_user:user_mention elements - "\
+             "example: user1:mention1,user2:mention2",
+            optional: true,
+            is_string: true,
+            default_value: ""),
         ]
       end
 
       def self.output
         [
           ["GITHUB_PULL_REQUEST_REMINDER_MESSAGE",
-           "The pull request reminder message"],
+           "The pull request reminder message",],
           ["GITHUB_PULL_REQUEST_AWAITING_REVIEW_NUMBER",
-           "The number of pull requests awaiting review"],
+           "The number of pull requests awaiting review",],
         ]
       end
 

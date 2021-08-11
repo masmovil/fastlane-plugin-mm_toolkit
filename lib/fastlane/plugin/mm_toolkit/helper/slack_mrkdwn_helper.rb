@@ -30,7 +30,7 @@ class SlackMrkdwn < Redcarpet::Render::Base
     # low level rendering
     :entity, :normal_text,
 
-    :doc_header, :doc_footer
+    :doc_header, :doc_footer,
   ].each do |method|
     define_method method do |*args|
       args.first
