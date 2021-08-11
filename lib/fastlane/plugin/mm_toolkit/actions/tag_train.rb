@@ -61,10 +61,13 @@ module Fastlane
           UI.success("New tag #{latest_tag} created!")
 
           if push_to_repo
-            other_action.push_git_tags(
-              tag: latest_tag
+            other_action.push_to_git_remote(
+              set_upstream: true,
+              force: true,
+              tags: true,
+              no_verify: true
             )
-            UI.success("New tag pushed to repo")
+            UI.success("New tag pushed to repo!")
           end
         else
           latest_tag = "v#{latest_version}"
