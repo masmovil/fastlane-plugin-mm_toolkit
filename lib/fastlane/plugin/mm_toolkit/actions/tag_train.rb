@@ -13,6 +13,8 @@ module Fastlane
 
     class TagTrainAction < Action
       def self.run(params)
+        create_new_commit = params.fetch(:create_new_commit)
+
         UI.message("Reading current tags…")
         latest_version = get_version_from_latest_git_tag_from_branch
         head_tag = get_head_tag_from_git
@@ -26,7 +28,7 @@ module Fastlane
         output_week_of_year = nil
 
         UI.header("Tag analysis")
-        if !head_tag.empty?
+        if !head_tag.empty? && !create_new_commit
           head_already_tagged = true
           latest_tag = head_tag
 
@@ -38,7 +40,7 @@ module Fastlane
           output_year = week_data[:year].to_i
           output_week_of_year = week_data[:week_of_year].to_i
 
-          if params[:create_new_commit]
+          if create_new_commit
             UI.message("Creating new commit to set the weekly tag…")
 
             other_action.ensure_git_status_clean
@@ -133,7 +135,8 @@ module Fastlane
           FastlaneCore::ConfigItem.new(key: :create_new_commit,
             env_name: "FL_TAG_TRAIN_CREATE_NEW_COMMIT",
             description: "If true, creates a new empty commit in the branch to set the new tag to",
-            is_string: false,
+            type: Boolean,
+            optional: true,
             default_value: false),
         ]
       end
