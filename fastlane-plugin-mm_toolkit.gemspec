@@ -26,6 +26,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency("redcarpet", ">= 3.5.1")
   spec.add_dependency("addressable", ">= 2.8.0")
+  spec.add_dependency("down")
 
   spec.add_development_dependency("pry")
   spec.add_development_dependency("bundler")
