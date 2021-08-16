@@ -37,13 +37,14 @@ module Fastlane
             # Docs: https://developer.webex.com/docs/api/basics#rate-limiting
             retry_after_value = res["Retry-After"]
             if retry_after_value.nil?
-              message = "Error sending Webex message. Review that the hook URL is OK and try again later."
+              message = "Error sending Webex message. Review that the hook URL is OK and try again later.\n"\
+              "Error code: #{res.code}\n"\
+              "Response body: #{res.body}"
               if fail_on_error
                 UI.user_error!(message)
               else
                 UI.error(message)
               end
-              UI.verbose("Response result:\n#{res}") unless res.nil?
             else
               retry_after_seconds = retry_after_value.to_i
 
