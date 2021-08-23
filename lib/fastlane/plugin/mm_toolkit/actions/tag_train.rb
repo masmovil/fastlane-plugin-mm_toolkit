@@ -156,7 +156,7 @@ module Fastlane
             default_value: false),
           FastlaneCore::ConfigItem.new(key: :push_to_repo,
             env_name: "FL_TAG_TRAIN_PUSH_TO_REPO",
-            description: "Indicates if the new tag should be pushed to the repo.",
+            description: "Indicates if the new tag should be pushed to the repo",
             type: Boolean,
             optional: true,
             default_value: true),
