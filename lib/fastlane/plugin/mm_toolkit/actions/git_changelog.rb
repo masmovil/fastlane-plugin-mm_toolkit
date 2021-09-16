@@ -233,8 +233,8 @@ module Fastlane
       # rubocop:disable Layout/LineLength
       def self.example_code
         [
-          "changelog_from_git_commits",
-          'changelog_from_git_commits(
+          "git_changelog",
+          'git_changelog(
                 between: ["7b092b3", "HEAD"],            # Optional, lets you specify a revision/tag range between which to collect commit info
                 pretty: "- (%ae) %s",                    # Optional, lets you provide a custom format to apply to each commit when generating the changelog text
                 date_format: "short",                    # Optional, lets you provide an additional date format to dates within the pretty-formatted string
