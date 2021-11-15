@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "json"
 
 module Fastlane
@@ -90,8 +91,8 @@ module Fastlane
         pr_url = Helper::GithubUtilsHelper.compose_github_url(pr_relative_url)
 
         "[#{repository_name}] Pull request opened by #{pr_owner_name}\n"\
-        "[\##{pr_number} #{pr_title}](#{pr_url})\n\n"\
-        "#{pr_body}"
+          "[\##{pr_number} #{pr_title}](#{pr_url})\n\n"\
+          "#{pr_body}"
       end
 
       def self.get_pr_opened_payload(params, pr_event)
@@ -165,19 +166,19 @@ module Fastlane
         case pr_review_state.downcase
         when "approved"
           msg = "#{pr_review_user_name} approved pull request "\
-                "[\##{pr_number} #{pr_title}](#{pr_link}) opened by #{pr_owner_mention}"
+            "[\##{pr_number} #{pr_title}](#{pr_link}) opened by #{pr_owner_mention}"
         when "changes_requested"
           msg = "#{pr_review_user_name} requested changes on pull request"\
-                "[\##{pr_number} #{pr_title}](#{pr_link}) opened by #{pr_owner_mention}"
+            "[\##{pr_number} #{pr_title}](#{pr_link}) opened by #{pr_owner_mention}"
         when "commented"
           msg = "#{pr_review_user_name} commented on pull request "\
-                "[\##{pr_number} #{pr_title}](#{pr_link}) opened by #{pr_owner_mention}"
+            "[\##{pr_number} #{pr_title}](#{pr_link}) opened by #{pr_owner_mention}"
         when "dismissed"
           msg = "#{pr_owner_name} dismissed pull request review by #{pr_reviewer_mention} on pull request "\
-                "[\##{pr_number} #{pr_title}](#{pr_link}) opened by #{pr_owner_mention}"
+            "[\##{pr_number} #{pr_title}](#{pr_link}) opened by #{pr_owner_mention}"
         when "pending"
           msg = "#{pr_reviewer_mention} has a pending pull request review on pull request "\
-                "[\##{pr_number} #{pr_title}](#{pr_link}) opened by #{pr_owner_mention}"
+            "[\##{pr_number} #{pr_title}](#{pr_link}) opened by #{pr_owner_mention}"
         end
 
         unless !pr_review_body || pr_review_body.empty?
@@ -211,9 +212,9 @@ module Fastlane
 
       def self.details
         "The action generates a Markdown message and payload with data related to PR events triggered in a GitHub Action.\n"\
-        "* The currently handled GitHub Actions events handled are: `pull_request` and `pull_request_review`\n"\
-        "* The currently handled `pull_request` actions are: `opened`, `closed`\n"\
-        "* The currently handled `pull_request_review` actions are: every action should be compatible\n"\
+          "* The currently handled GitHub Actions events handled are: `pull_request` and `pull_request_review`\n"\
+          "* The currently handled `pull_request` actions are: `opened`, `closed`\n"\
+          "* The currently handled `pull_request_review` actions are: every action should be compatible\n"\
       end
 
       def self.available_options
@@ -222,7 +223,7 @@ module Fastlane
             env_name: "FL_GITHUB_CONTEXT",
             description:
              "The GitHub Actions context."\
-             "You must pass it to Fastlane with `${{ toJson(github) }}` in a GitHub action environment variable",
+              "You must pass it to Fastlane with `${{ toJson(github) }}` in a GitHub action environment variable",
             is_string: true,
             optional: true,
             default_value: ENV["GITHUB_CONTEXT"]),
@@ -230,8 +231,8 @@ module Fastlane
             env_name: "FL_GITHUB_USER_MENTIONS",
             description:
              "Mapping of GitHub users to your own messaging system's mention style, "\
-             "in a comma separated list of github_user:user_mention elements - "\
-             "example: user1:mention1,user2:mention2",
+              "in a comma separated list of github_user:user_mention elements - "\
+              "example: user1:mention1,user2:mention2",
             optional: true,
             is_string: true,
             default_value: ""),

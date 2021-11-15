@@ -1,11 +1,12 @@
 # frozen_string_literal: true
+
 # Forked from https://github.com/BlazingBBQ/SlackMrkdwn
 require "redcarpet"
 
-class SlackMrkdwn < Redcarpet::Render::Base
+class Mrkdwn < Redcarpet::Render::Base
   class << self
     def from(markdown)
-      renderer = SlackMrkdwn.new
+      renderer = Mrkdwn.new
       Redcarpet::Markdown.new(renderer, strikethrough: true, underline: true, fenced_code_blocks: true).render(markdown)
     end
   end
@@ -174,9 +175,9 @@ end
 
 module Fastlane
   module Actions
-    class SlackMrkdwnHelper
+    class MrkdwnHelper
       def self.format_mrkdwn(text)
-        SlackMrkdwn.from(text)
+        Mrkdwn.from(text)
       end
     end
   end

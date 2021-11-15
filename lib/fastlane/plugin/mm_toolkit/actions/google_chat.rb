@@ -2,8 +2,8 @@
 
 module Fastlane
   module Actions
-    class WebexAction < Action
-      WEBEX_HOOK_URL_REGEX = %r{https://(api\.ciscospark\.com|webexapis\.com)/v1/webhooks/incoming/\w+}
+    class GoogleChatAction < Action
+      GOOGLE_CHAT_HOOK_URL_REGEX = %r{https://chat\.googleapis\.com/v1/spaces/\w+/messages\?key=[A-Za-z0-9-_%]+&token=[A-Za-z0-9-_%]+}
 
       def self.run(params)
         send_message(params)
@@ -13,51 +13,30 @@ module Fastlane
       # @!group support functions
       #####################################################
 
-      def self.send_message(params, retries = 0)
-        # Stop retrying if we have reached max retries
-        if retries > params[:message_max_retries]
-          UI.user_error!("Max retries reached, the message could not be sent")
-          return
-        end
-
+      def self.send_message(params)
         uri = URI(params[:url])
         markdown = format_message(params)
-        fail_on_error = params[:fail_on_error]
 
         begin
           # Launch the request
-          res = Net::HTTP.post(uri, { "markdown" => markdown }.to_json, "Content-Type" => "application/json")
+          res = Net::HTTP.post(uri, { "text" => markdown }.to_json, { "Content-Type" => "application/json", "charset" => "UTF-8" })
 
           # Check if the response went OK. If it did notify the user, else check the response for alternatives
           case res
           when Net::HTTPSuccess
-            UI.success("Webex message has been sent successfully!")
+            UI.success("Google Chat message has been sent successfully!")
           else
-            # Check if there's a `Retry-After` header to retry the request.
-            # If there is, retry the request after the specified time. Else, return an error
-            # Docs: https://developer.webex.com/docs/api/basics#rate-limiting
-            retry_after_value = res["Retry-After"]
-            if retry_after_value.nil?
-              message = "Error sending Webex message. Review that the hook URL is OK and try again later.\n"\
-                "Error code: #{res.code}\n"\
-                "Response body: #{res.body}"
-              if fail_on_error
-                UI.user_error!(message)
-              else
-                UI.error(message)
-              end
+            message = "Error sending Google Chat message. Review that the hook URL is OK and try again later.\n"\
+              "Error code: #{res.code}\n"\
+              "Response body: #{res.body}"
+            if fail_on_error
+              UI.user_error!(message)
             else
-              retry_after_seconds = retry_after_value.to_i
-
-              UI.important("Retrying Webex message sending after #{retry_after_seconds} seconds…")
-
-              sleep(retry_after_seconds)
-
-              send_message(params, retries + 1)
+              UI.error(message)
             end
           end
         rescue => exception
-          UI.error("An exception happened while sending the Webex message:\n#{exception}")
+          UI.error("An exception happened while sending the Google Chat message:\n#{exception}")
         end
       end
 
@@ -89,12 +68,12 @@ module Fastlane
       #####################################################
 
       def self.description
-        "Send a message to your Webex space"
+        "Send a message to your Google Chat space"
       end
 
       def self.details
-        "The action allows users to send messages through an "\
-          "[Incoming Webhook](https://apphub.webex.com/messaging/applications/incoming-webhooks-cisco-systems-38054) "\
+        "The action allows users to send basic messages through an "\
+          "[Incoming Webhook](https://developers.google.com/chat/how-tos/webhooks) "\
           "to the space that the webhook is configured to. "\
           "You can also add some payload data and metadata related to builds if you use the action to display CI/CD related messages."
       end
@@ -102,30 +81,32 @@ module Fastlane
       def self.available_options
         [
           FastlaneCore::ConfigItem.new(key: :url,
-            env_name: "FL_WEBEX_URL",
+            env_name: "FL_GOOGLE_CHAT_URL",
             description: "Hook URL to a Webex resource to post messages",
             is_string: true,
             sensitive: true,
             optional: false,
             verify_block: proc do |value|
-              UI.user_error!("Invalid Webex hook URL") unless value.match?(WEBEX_HOOK_URL_REGEX)
+              UI.user_error!("Invalid Google Chat hook URL") unless value.match?(GOOGLE_CHAT_HOOK_URL_REGEX)
             end),
           FastlaneCore::ConfigItem.new(key: :message,
-            env_name: "FL_WEBEX_MESSAGE",
+            env_name: "FL_GOOGLE_CHAT_MESSAGE",
             description:
               "The message that should be displayed on Webex. "\
-              "The message should be formatted in Markdown language",
+              "The message should be formatted in Markdown language. Depending on the syntax, you'll need to use the "\
+              "provided Actions::MrkdwnHelper.format_mrkdwn function to format messages to an adequate Markdown "\
+              "syntax for Google Chat",
             is_string: true,
             optional: false),
           FastlaneCore::ConfigItem.new(key: :message_max_retries,
-            env_name: "FL_WEBEX_MESSAGE_MAX_RETRIES",
+            env_name: "FL_GOOGLE_CHAT_MESSAGE_MAX_RETRIES",
             description:
               "How many retries we should do if the message sending fails",
             is_string: false,
             optional: true,
             default_value: 3),
           FastlaneCore::ConfigItem.new(key: :payload,
-            env_name: "FL_WEBEX_PAYLOAD",
+            env_name: "FL_GOOGLE_CHAT_PAYLOAD",
             description:
               "Add additional information to this message."\
               "The payload must be a hash containing any key with any value",
@@ -133,7 +114,7 @@ module Fastlane
             optional: true,
             default_value: {}),
           FastlaneCore::ConfigItem.new(key: :success,
-            env_name: "FL_WEBEX_SUCCESS",
+            env_name: "FL_GOOGLE_CHAT_SUCCESS",
             description:
               "Was this build successful? (true/false)."\
               "If not specified, no build-related format will be appended to the message",
@@ -141,7 +122,7 @@ module Fastlane
             optional: true,
             default_value: nil),
           FastlaneCore::ConfigItem.new(key: :fail_on_error,
-            env_name: "FL_WEBEX_FAIL_ON_ERROR",
+            env_name: "FL_GOOGLE_CHAT_FAIL_ON_ERROR",
             description:
               "Should an error sending the Webex post cause a failure? (true/false)",
             is_string: false,
@@ -151,7 +132,7 @@ module Fastlane
       end
 
       def self.authors
-        ["sebastianvarela", "adriangl"]
+        ["adriangl"]
       end
 
       def self.is_supported?(platform)
@@ -162,10 +143,10 @@ module Fastlane
         [
           '
             # You can send a simple message
-            webex(message: "This is a test message")
+            google_chat(message: "This is a test message")
 
             # Or enrich it with payloads and success metadata
-            webex(message: "This is a test message", success: true, payload: {"Build": "Success"})
+            google_chat(message: "This is a test message", success: true, payload: {"Build": "Success"})
             ',
         ]
       end

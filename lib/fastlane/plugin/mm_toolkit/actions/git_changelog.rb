@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Fastlane
   module Actions
     module SharedValues
@@ -123,7 +124,7 @@ module Fastlane
           FastlaneCore::ConfigItem.new(key: :between,
             env_name: "FL_GIT_CHANGELOG_BETWEEN",
             description: "Array containing two Git revision values between which to collect messages, "\
-                        "you mustn't use it with :commits_count key at the same time",
+              "you mustn't use it with :commits_count key at the same time",
             optional: true,
             type: Array, # allow Array, String both
             conflicting_options: [:commits_count],
@@ -189,14 +190,14 @@ module Fastlane
             env_name: "FL_GIT_CHANGELOG_MERGE_COMMIT_FILTERING",
             description: "Controls inclusion of merge commits when collecting the changelog. Valid values: #{GIT_MERGE_COMMIT_FILTERING_OPTIONS.map do |o|
                                                                                                                "`:#{o}`"
-                                                                                                             end .join(", ")}",
+                                                                                                             end.join(", ")}",
             optional: true,
             default_value: "include_merges",
             verify_block: proc do |value|
                             matches_option = GIT_MERGE_COMMIT_FILTERING_OPTIONS.any? { |opt| opt.to_s == value }
                             UI.user_error!("Valid values for :merge_commit_filtering are #{GIT_MERGE_COMMIT_FILTERING_OPTIONS.map do |o|
                                                                                              "'#{o}'"
-                                                                                           end .join(", ")}") unless matches_option
+                                                                                           end.join(", ")}") unless matches_option
                           end),
           FastlaneCore::ConfigItem.new(key: :replace_patterns,
             env_name: "FL_GIT_CHANGELOG_REPLACE_PATTERNS",

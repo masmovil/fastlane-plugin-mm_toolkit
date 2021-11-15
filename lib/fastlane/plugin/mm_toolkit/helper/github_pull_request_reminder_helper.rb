@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Fastlane
   module Actions
     # Returns the GitHub login and Webex email mapping to be used with github_pull_request_reminder's user_logins_and_mentions param

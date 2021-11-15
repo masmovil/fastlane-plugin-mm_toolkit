@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Fastlane
   module Actions
     module SharedValues
@@ -140,10 +141,10 @@ module Fastlane
 
       def self.details
         "The action generates tags based on the week of the year. The syntax of the generated tags (and the tags the action expect "\
-        "as input) is as follows: "\
-        "\nv[two_digit_year].[two_digit_week].0"\
-        "\nThe tag conforms to ISO-8601 standard to calculate weeks between a year: this means that the first week of the year will be "\
-        "the one that contains the first Thursday"
+          "as input) is as follows: "\
+          "\nv[two_digit_year].[two_digit_week].0"\
+          "\nThe tag conforms to ISO-8601 standard to calculate weeks between a year: this means that the first week of the year will be "\
+          "the one that contains the first Thursday"
       end
 
       def self.available_options
@@ -200,7 +201,7 @@ module Fastlane
 
       def self.return_value
         "The `new_tag_created`, `latest_version`, `commit_count`, `year` and `week_of_year` from which the weekly tag is generated."\
-        "\nIf no new version is tagged, `year` and `week_of_year` will be nil."
+          "\nIf no new version is tagged, `year` and `week_of_year` will be nil."
       end
 
       def self.authors

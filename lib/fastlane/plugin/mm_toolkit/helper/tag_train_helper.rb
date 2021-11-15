@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Fastlane
   module Actions
     # Returns the latest tag from the current branch

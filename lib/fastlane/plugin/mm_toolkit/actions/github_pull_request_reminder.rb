@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Fastlane
   module Actions
     module SharedValues
@@ -93,7 +94,7 @@ module Fastlane
 
       def self.details
         "The action generates a Markdown message indicating the PRs that need review, optionally mentioning the people that "\
-        "need to review said PR using a mapper of GitHub users to your messaging mention style of choice."
+          "need to review said PR using a mapper of GitHub users to your messaging mention style of choice."
       end
 
       def self.available_options
@@ -109,7 +110,7 @@ module Fastlane
             env_name: "FL_GITHUB_API_TOKEN",
             description:
              "API Token for GitHub with `repo` scope - generate one at https://github.com/settings/tokens. "\
-             "Defaults to `$GITHUB_API_TOKEN`",
+              "Defaults to `$GITHUB_API_TOKEN`",
             sensitive: true,
             code_gen_sensitive: true,
             is_string: true,
@@ -119,15 +120,15 @@ module Fastlane
             env_name: "FL_GITHUB_REPOSITORY",
             description:
              "Owner and repository name of the GitHub repo to check - example: octocat/Hello-World. "\
-             "Defaults to `$GITHUB_REPOSITORY`",
+              "Defaults to `$GITHUB_REPOSITORY`",
             default_value: ENV["GITHUB_REPOSITORY"],
             optional: true),
           FastlaneCore::ConfigItem.new(key: :github_users_and_mentions,
             env_name: "FL_GITHUB_USER_MENTIONS",
             description:
              "Mapping of GitHub users to your own messaging system's mention style, "\
-             "in a comma separated list of github_user:user_mention elements - "\
-             "example: user1:mention1,user2:mention2",
+              "in a comma separated list of github_user:user_mention elements - "\
+              "example: user1:mention1,user2:mention2",
             optional: true,
             is_string: true,
             default_value: ""),

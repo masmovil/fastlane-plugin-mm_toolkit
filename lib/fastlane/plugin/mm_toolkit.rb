@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "fastlane/plugin/mm_toolkit/version"
 
 module Fastlane
