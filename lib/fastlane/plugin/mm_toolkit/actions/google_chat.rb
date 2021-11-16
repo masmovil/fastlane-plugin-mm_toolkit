@@ -54,13 +54,13 @@ module Fastlane
 
         markdown += "#{prefix}#{params[:message]}"
 
-        markdown += "\n\n" unless params[:payload].empty?
+        markdown += "\n\n\n" unless params[:payload].empty?
 
         markdown += params[:payload].map do |k, v|
-          ">**#{k}**  \n>#{v.to_s.gsub("\n", "  \n>")}  \n"
+          "**#{k}**  \n#{v.to_s.gsub("\n", "  \n")}  \n"
         end.join("")
 
-        markdown
+        Actions::MrkdwnHelper.format_mrkdwn(markdown)
       end
 
       #####################################################
@@ -93,9 +93,7 @@ module Fastlane
             env_name: "FL_GOOGLE_CHAT_MESSAGE",
             description:
               "The message that should be displayed on Webex. "\
-              "The message should be formatted in Markdown language. Depending on the syntax, you'll need to use the "\
-              "provided Actions::MrkdwnHelper.format_mrkdwn function to format messages to an adequate Markdown "\
-              "syntax for Google Chat",
+              "The message should be formatted in Markdown language",
             is_string: true,
             optional: false),
           FastlaneCore::ConfigItem.new(key: :message_max_retries,
