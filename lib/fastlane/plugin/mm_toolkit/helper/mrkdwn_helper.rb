@@ -43,7 +43,7 @@ class Mrkdwn < Redcarpet::Render::Base
     content
       .gsub("&", "&amp;")
       .split(/ /) # Done with regex so it doesn't remove newlines
-      .map { |s| /<[@!].+>/.match?(s) ? s : s.gsub("<", "&lt;").gsub(">", "&gt;") }
+      .map { |s| /<([@!]|users).+>/.match?(s) ? s : s.gsub("<", "&lt;").gsub(">", "&gt;") } # Escape sequences which are not user mentions
       .join(" ")
   end
 
