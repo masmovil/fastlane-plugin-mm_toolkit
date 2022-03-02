@@ -16,6 +16,7 @@ module Fastlane
       def self.send_message(params)
         uri = URI(params[:url])
         markdown = format_message(params)
+        fail_on_error = params[:fail_on_error]
 
         begin
           # Launch the request
