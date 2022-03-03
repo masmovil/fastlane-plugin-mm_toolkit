@@ -4,6 +4,7 @@ module Fastlane
   module Actions
     class GoogleChatAction < Action
       GOOGLE_CHAT_HOOK_URL_REGEX = %r{https://chat\.googleapis\.com/v1/spaces/\w+/messages\?key=[A-Za-z0-9-_%]+&token=[A-Za-z0-9-_%]+}
+      GOOGLE_CHAT_MAX_CHARACTER_LIMIT = 4096
 
       def self.run(params)
         send_message(params)
@@ -17,6 +18,11 @@ module Fastlane
         uri = URI(params[:url])
         markdown = format_message(params)
         fail_on_error = params[:fail_on_error]
+
+        if (markdown.length > GOOGLE_CHAT_MAX_CHARACTER_LIMIT)
+          UI.message("Message exceeds the #{GOOGLE_CHAT_MAX_CHARACTER_LIMIT} character limit. The message will be truncated")
+          markdown = "#{string[0..GOOGLE_CHAT_MAX_CHARACTER_LIMIT]}"
+        end
 
         begin
           # Launch the request
@@ -37,7 +43,12 @@ module Fastlane
             end
           end
         rescue => exception
-          UI.error("An exception happened while sending the Google Chat message:\n#{exception}")
+          exception_message = "An exception happened while sending the Google Chat message:\n#{exception}"
+          if fail_on_error
+            UI.user_error!(exception_message)
+          else
+            UI.error(exception_message)
+          end
         end
       end
 
