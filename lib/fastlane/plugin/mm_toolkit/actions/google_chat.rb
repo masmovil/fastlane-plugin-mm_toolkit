@@ -19,9 +19,9 @@ module Fastlane
         markdown = format_message(params)
         fail_on_error = params[:fail_on_error]
 
-        if (markdown.length > GOOGLE_CHAT_MAX_CHARACTER_LIMIT)
+        if markdown.length > GOOGLE_CHAT_MAX_CHARACTER_LIMIT
           UI.message("Message exceeds the #{GOOGLE_CHAT_MAX_CHARACTER_LIMIT} character limit. The message will be truncated")
-          markdown = "#{string[0..GOOGLE_CHAT_MAX_CHARACTER_LIMIT]}"
+          markdown = string[0..GOOGLE_CHAT_MAX_CHARACTER_LIMIT].to_s
         end
 
         begin

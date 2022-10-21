@@ -54,9 +54,9 @@ module Fastlane
           path: "/repos/#{params[:repo]}/pulls",
           body: {}
         )[:json]
-        #require "pp"
+        # require "pp"
 
-        #pp(pr_data)
+        # pp(pr_data)
 
         pr_data.filter { |pr| !pr[REQUESTED_REVIEWERS_KEY].empty? || !pr[REQUESTED_TEAMS_KEY].empty? }
       end
