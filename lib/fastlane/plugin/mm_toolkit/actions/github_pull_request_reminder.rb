@@ -52,7 +52,7 @@ module Fastlane
           api_token: params[:api_token],
           http_method: "GET",
           path: "/repos/#{params[:repo]}/pulls",
-          body: {}
+          body: {},
         )[:json]
         # require "pp"
 

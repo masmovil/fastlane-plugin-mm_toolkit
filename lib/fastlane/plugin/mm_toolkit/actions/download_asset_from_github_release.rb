@@ -35,7 +35,7 @@ module Fastlane
             max_redirects: 5,
             content_length_proc: ->(content_length) {
               UI.message("Asset size: #{format("%.2f", content_length.to_f / 2**20)} MiB")
-            }
+            },
           )
 
           UI.success("Asset downloaded!")

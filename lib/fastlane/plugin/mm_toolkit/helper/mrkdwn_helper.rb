@@ -4,11 +4,9 @@
 require "redcarpet"
 
 class Mrkdwn < Redcarpet::Render::Base
-  class << self
-    def from(markdown)
-      renderer = Mrkdwn.new
-      Redcarpet::Markdown.new(renderer, strikethrough: true, underline: true, fenced_code_blocks: true).render(markdown)
-    end
+  def self.from(markdown)
+    renderer = Mrkdwn.new
+    Redcarpet::Markdown.new(renderer, strikethrough: true, underline: true, fenced_code_blocks: true).render(markdown)
   end
 
   # Methods where the first argument is the text content

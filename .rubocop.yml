@@ -1,5 +1,5 @@
 inherit_gem:
-    rubocop-shopify: rubocop.yml
+  rubocop-shopify: rubocop.yml
 
 Naming/AccessorMethodName:
   Enabled: false
@@ -14,6 +14,9 @@ Naming/PredicateName:
 Style/StringLiterals:
   EnforcedStyle: double_quotes
 
+Style/ClassMethodsDefinitions:
+  EnforcedStyle: def_self
+
 Layout/LineLength:
   Max: 140
-  IgnoredPatterns: ['^\s*#']
+  AllowedPatterns: ['^\s*#']

@@ -56,7 +56,7 @@ module Fastlane
 
           other_action.add_git_tag(
             tag: latest_tag,
-            message: "Happy week #{output_week_of_year}!"
+            message: "Happy week #{output_week_of_year}!",
           )
 
           UI.success("New tag #{latest_tag} created!")
@@ -66,7 +66,7 @@ module Fastlane
               set_upstream: true,
               force: true,
               tags: true,
-              no_verify: true
+              no_verify: true,
             )
             UI.success("New tag pushed to repo!")
           end

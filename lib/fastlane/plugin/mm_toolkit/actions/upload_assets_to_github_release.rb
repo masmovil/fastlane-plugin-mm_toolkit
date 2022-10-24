@@ -28,14 +28,14 @@ module Fastlane
             url: repository_name,
             server_url: server_url,
             api_token: api_token,
-            version: version
+            version: version,
           )
         elsif api_bearer
           release = other_action.get_github_release(
             url: repository_name,
             server_url: server_url,
             api_bearer: api_bearer,
-            version: version
+            version: version,
           )
         else
           UI.user_error!("You need to provide either an api_token or an api_bearer.")
@@ -61,7 +61,7 @@ module Fastlane
               UI.error("GitHub responded with #{get_result[:status]}:#{get_result[:body]}")
               UI.user_error!("Failed to fetch the newly created release, but it *has been created* successfully.")
             end,
-          }
+          },
         ) do |get_result|
           UI.success("Successfully uploaded assets #{assets} to release \"#{html_url}\"")
           return get_result[:json]
@@ -111,7 +111,7 @@ module Fastlane
               UI.error("GitHub responded with #{result[:status]}:#{result[:body]}")
               UI.user_error!("Failed to upload asset #{file_name} to GitHub.")
             end,
-          }
+          },
         ) do |_result|
           UI.success("Successfully uploaded #{file_name}.")
         end
