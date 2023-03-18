@@ -92,52 +92,64 @@ module Fastlane
 
       def self.available_options
         [
-          FastlaneCore::ConfigItem.new(key: :url,
+          FastlaneCore::ConfigItem.new(
+            key: :url,
             env_name: "FL_GOOGLE_CHAT_URL",
             description: "Hook URL to a Webex resource to post messages",
             is_string: true,
             sensitive: true,
             optional: false,
             verify_block: proc do |value|
-              UI.user_error!("Invalid Google Chat hook URL") unless value.match?(GOOGLE_CHAT_HOOK_URL_REGEX)
-            end),
-          FastlaneCore::ConfigItem.new(key: :message,
+                            UI.user_error!("Invalid Google Chat hook URL") unless value.match?(GOOGLE_CHAT_HOOK_URL_REGEX)
+                          end,
+          ),
+          FastlaneCore::ConfigItem.new(
+            key: :message,
             env_name: "FL_GOOGLE_CHAT_MESSAGE",
             description:
-              "The message that should be displayed on Webex. "\
+                          "The message that should be displayed on Webex. "\
               "The message should be formatted in Markdown language",
             is_string: true,
-            optional: false),
-          FastlaneCore::ConfigItem.new(key: :message_max_retries,
+            optional: false,
+          ),
+          FastlaneCore::ConfigItem.new(
+            key: :message_max_retries,
             env_name: "FL_GOOGLE_CHAT_MESSAGE_MAX_RETRIES",
             description:
-              "How many retries we should do if the message sending fails",
+                          "How many retries we should do if the message sending fails",
             is_string: false,
             optional: true,
-            default_value: 3),
-          FastlaneCore::ConfigItem.new(key: :payload,
+            default_value: 3,
+          ),
+          FastlaneCore::ConfigItem.new(
+            key: :payload,
             env_name: "FL_GOOGLE_CHAT_PAYLOAD",
             description:
-              "Add additional information to this message."\
+                          "Add additional information to this message."\
               "The payload must be a hash containing any key with any value",
             is_string: false,
             optional: true,
-            default_value: {}),
-          FastlaneCore::ConfigItem.new(key: :success,
+            default_value: {},
+          ),
+          FastlaneCore::ConfigItem.new(
+            key: :success,
             env_name: "FL_GOOGLE_CHAT_SUCCESS",
             description:
-              "Was this build successful? (true/false)."\
+                          "Was this build successful? (true/false)."\
               "If not specified, no build-related format will be appended to the message",
             is_string: false,
             optional: true,
-            default_value: nil),
-          FastlaneCore::ConfigItem.new(key: :fail_on_error,
+            default_value: nil,
+          ),
+          FastlaneCore::ConfigItem.new(
+            key: :fail_on_error,
             env_name: "FL_GOOGLE_CHAT_FAIL_ON_ERROR",
             description:
-              "Should an error sending the Webex post cause a failure? (true/false)",
+                          "Should an error sending the Webex post cause a failure? (true/false)",
             is_string: false,
             optional: true,
-            default_value: false),
+            default_value: false,
+          ),
         ]
       end
 

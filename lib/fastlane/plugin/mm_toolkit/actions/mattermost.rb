@@ -27,8 +27,10 @@ module Fastlane
 
       # rubocop:disable Metrics/ParameterLists
       def self.send_message(hook_url, text, username, icon_url, channel, icon_emoji, attachments, props, type)
-        UI.user_error!("You must set a 'text' or non-empty 'attachments' in order to send a message") unless has_required_fields?(text,
-          attachments)
+        UI.user_error!("You must set a 'text' or non-empty 'attachments' in order to send a message") unless has_required_fields?(
+          text,
+          attachments,
+        )
         begin
           header = {
             "Content-Type": "application/json",
@@ -111,54 +113,72 @@ module Fastlane
 
       def self.available_options
         [
-          FastlaneCore::ConfigItem.new(key: :url,
+          FastlaneCore::ConfigItem.new(
+            key: :url,
             env_name: "MATTERMOST_WEBHOOK_URL",
             sensitive: true,
             description: "Mattermost Incoming Webhooks URL",
             verify_block: proc do |value|
                             UI.user_error!("Invalid Mattermost webhook URL") unless working_url?(value)
-                          end),
-          FastlaneCore::ConfigItem.new(key: :text,
+                          end,
+          ),
+          FastlaneCore::ConfigItem.new(
+            key: :text,
             env_name: "MATTERMOST_TEXT",
             optional: true,
-            description: "Markdown-formatted message to display in the post"),
-          FastlaneCore::ConfigItem.new(key: :username,
+            description: "Markdown-formatted message to display in the post",
+          ),
+          FastlaneCore::ConfigItem.new(
+            key: :username,
             env_name: "MATTERMOST_USERNAME",
             optional: true,
             description: "Overrides the username the message posts as",
-            default_value: DEFAULT_USERNAME),
-          FastlaneCore::ConfigItem.new(key: :icon_url,
+            default_value: DEFAULT_USERNAME,
+          ),
+          FastlaneCore::ConfigItem.new(
+            key: :icon_url,
             env_name: "MATTERMOST_ICON_URL",
             optional: true,
             description: "Overrides the profile picture the message posts with",
-            default_value: DEFAULT_ICON_URL),
-          FastlaneCore::ConfigItem.new(key: :channel,
+            default_value: DEFAULT_ICON_URL,
+          ),
+          FastlaneCore::ConfigItem.new(
+            key: :channel,
             env_name: "MATTERMOST_CHANNEL",
             optional: true,
             description: "Overrides the channel the message posts in. Use the channel's name and not the display name, "\
-              "e.g. use `town-square`, not `Town Square`"),
-          FastlaneCore::ConfigItem.new(key: :icon_emoji,
+              "e.g. use `town-square`, not `Town Square`",
+          ),
+          FastlaneCore::ConfigItem.new(
+            key: :icon_emoji,
             env_name: "MATTERMOST_ICON_EMOJI",
             optional: true,
-            description: "Overrides the profile picture and `icon_url` parameter"),
-          FastlaneCore::ConfigItem.new(key: :attachments,
+            description: "Overrides the profile picture and `icon_url` parameter",
+          ),
+          FastlaneCore::ConfigItem.new(
+            key: :attachments,
             env_name: "MATTERMOST_ATTACHMENTS",
             optional: true,
             description: "Message attachments used for richer formatting options. "\
               "Check [https://docs.mattermost.com/developer/message-attachments.html](the documentation) for more details",
-            type: Array),
-          FastlaneCore::ConfigItem.new(key: :props,
+            type: Array,
+          ),
+          FastlaneCore::ConfigItem.new(
+            key: :props,
             env_name: "MATTERMOST_PROPS",
             optional: true,
             description: "Sets the post `props`, a JSON property bag for storing extra or meta data on the post",
-            type: Hash),
-          FastlaneCore::ConfigItem.new(key: :type,
+            type: Hash,
+          ),
+          FastlaneCore::ConfigItem.new(
+            key: :type,
             env_name: "MATTERMOST_TYPE",
             optional: true,
             description: "Sets the post `type`, mainly for use by plugins. If not blank, must begin with `custom_`",
             verify_block: proc do |value|
                             UI.user_error!("The type must start with 'custom_'") unless is_custom_type?(value)
-                          end),
+                          end,
+          ),
         ]
       end
 

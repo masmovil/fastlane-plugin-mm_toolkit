@@ -17,19 +17,26 @@ class Mrkdwn < Redcarpet::Render::Base
     :autolink,
     :raw_html,
 
-    :table, :table_row, :table_cell,
+    :table,
+    :table_row,
+    :table_cell,
 
-    :superscript, :highlight,
+    :superscript,
+    :highlight,
 
     # footnotes
-    :footnotes, :footnote_def, :footnote_ref,
+    :footnotes,
+    :footnote_def,
+    :footnote_ref,
 
     :hrule,
 
     # low level rendering
-    :entity, :normal_text,
+    :entity,
+    :normal_text,
 
-    :doc_header, :doc_footer,
+    :doc_header,
+    :doc_footer,
   ].each do |method|
     define_method method do |*args|
       args.first

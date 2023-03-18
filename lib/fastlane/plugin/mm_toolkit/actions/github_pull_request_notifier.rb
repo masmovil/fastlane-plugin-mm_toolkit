@@ -91,7 +91,7 @@ module Fastlane
         pr_url = Helper::GithubUtilsHelper.compose_github_url(pr_relative_url)
 
         "[#{repository_name}] Pull request opened by #{pr_owner_name}\n"\
-          "[\##{pr_number} #{pr_title}](#{pr_url})\n\n"\
+          "[##{pr_number} #{pr_title}](#{pr_url})\n\n"\
           "#{pr_body}"
       end
 
@@ -134,7 +134,7 @@ module Fastlane
 
         pr_closed_verb = pr_merged ? "merged" : "closed"
 
-        "[#{repository_name}] Pull request [\##{pr_number} #{pr_title}](#{pr_url}) " + pr_closed_verb + " by #{pr_owner_name}\n"
+        "[#{repository_name}] Pull request [##{pr_number} #{pr_title}](#{pr_url}) " + pr_closed_verb + " by #{pr_owner_name}\n"
       end
 
       def self.get_pr_review_message(params, pr_event)
@@ -166,19 +166,19 @@ module Fastlane
         case pr_review_state.downcase
         when "approved"
           msg = "#{pr_review_user_name} approved pull request "\
-            "[\##{pr_number} #{pr_title}](#{pr_link}) opened by #{pr_owner_mention}"
+            "[##{pr_number} #{pr_title}](#{pr_link}) opened by #{pr_owner_mention}"
         when "changes_requested"
           msg = "#{pr_review_user_name} requested changes on pull request"\
-            "[\##{pr_number} #{pr_title}](#{pr_link}) opened by #{pr_owner_mention}"
+            "[##{pr_number} #{pr_title}](#{pr_link}) opened by #{pr_owner_mention}"
         when "commented"
           msg = "#{pr_review_user_name} commented on pull request "\
-            "[\##{pr_number} #{pr_title}](#{pr_link}) opened by #{pr_owner_mention}"
+            "[##{pr_number} #{pr_title}](#{pr_link}) opened by #{pr_owner_mention}"
         when "dismissed"
           msg = "#{pr_owner_name} dismissed pull request review by #{pr_reviewer_mention} on pull request "\
-            "[\##{pr_number} #{pr_title}](#{pr_link}) opened by #{pr_owner_mention}"
+            "[##{pr_number} #{pr_title}](#{pr_link}) opened by #{pr_owner_mention}"
         when "pending"
           msg = "#{pr_reviewer_mention} has a pending pull request review on pull request "\
-            "[\##{pr_number} #{pr_title}](#{pr_link}) opened by #{pr_owner_mention}"
+            "[##{pr_number} #{pr_title}](#{pr_link}) opened by #{pr_owner_mention}"
         end
 
         unless !pr_review_body || pr_review_body.empty?
@@ -219,32 +219,40 @@ module Fastlane
 
       def self.available_options
         [
-          FastlaneCore::ConfigItem.new(key: :context,
+          FastlaneCore::ConfigItem.new(
+            key: :context,
             env_name: "FL_GITHUB_CONTEXT",
             description:
-             "The GitHub Actions context."\
+                         "The GitHub Actions context."\
               "You must pass it to Fastlane with `${{ toJson(github) }}` in a GitHub action environment variable",
             is_string: true,
             optional: true,
-            default_value: ENV["GITHUB_CONTEXT"]),
-          FastlaneCore::ConfigItem.new(key: :github_users_and_mentions,
+            default_value: ENV["GITHUB_CONTEXT"],
+          ),
+          FastlaneCore::ConfigItem.new(
+            key: :github_users_and_mentions,
             env_name: "FL_GITHUB_USER_MENTIONS",
             description:
-             "Mapping of GitHub users to your own messaging system's mention style, "\
+                         "Mapping of GitHub users to your own messaging system's mention style, "\
               "in a comma separated list of github_user:user_mention elements - "\
               "example: user1:mention1,user2:mention2",
             optional: true,
             is_string: true,
-            default_value: ""),
+            default_value: "",
+          ),
         ]
       end
 
       def self.output
         [
-          ["GITHUB_PULL_REQUEST_NOTIFIER_GITHUB_EVENT_NAME",
-           "The name of the triggered pull request event",],
-          ["GITHUB_PULL_REQUEST_NOTIFIER_GITHUB_EVENT_ACTION",
-           "The name of the triggered pull request event action",],
+          [
+            "GITHUB_PULL_REQUEST_NOTIFIER_GITHUB_EVENT_NAME",
+            "The name of the triggered pull request event",
+          ],
+          [
+            "GITHUB_PULL_REQUEST_NOTIFIER_GITHUB_EVENT_ACTION",
+            "The name of the triggered pull request event action",
+          ],
         ]
       end
 

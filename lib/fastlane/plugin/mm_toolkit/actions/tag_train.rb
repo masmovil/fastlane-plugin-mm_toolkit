@@ -149,47 +149,67 @@ module Fastlane
 
       def self.available_options
         [
-          FastlaneCore::ConfigItem.new(key: :create_new_commit,
+          FastlaneCore::ConfigItem.new(
+            key: :create_new_commit,
             env_name: "FL_TAG_TRAIN_CREATE_NEW_COMMIT",
             description: "If true, creates a new empty commit in the branch to set the new tag to",
             type: Boolean,
             optional: true,
-            default_value: false),
-          FastlaneCore::ConfigItem.new(key: :push_to_repo,
+            default_value: false,
+          ),
+          FastlaneCore::ConfigItem.new(
+            key: :push_to_repo,
             env_name: "FL_TAG_TRAIN_PUSH_TO_REPO",
             description: "Indicates if the new tag should be pushed to the repo",
             type: Boolean,
             optional: true,
-            default_value: true),
-          FastlaneCore::ConfigItem.new(key: :committer_name,
+            default_value: true,
+          ),
+          FastlaneCore::ConfigItem.new(
+            key: :committer_name,
             env_name: "FL_TAG_TRAIN_COMMITTER_NAME",
             description: "Indicates the name of the commiter of the tag",
             type: String,
             optional: true,
-            default_value: "tag-train"),
-          FastlaneCore::ConfigItem.new(key: :committer_email,
+            default_value: "tag-train",
+          ),
+          FastlaneCore::ConfigItem.new(
+            key: :committer_email,
             env_name: "FL_TAG_TRAIN_COMMITTER_EMAIL",
             description: "Indicates the e-mail of the commiter of the tag",
             type: String,
             optional: true,
-            default_value: "tag-train@tag-train.com"),
+            default_value: "tag-train@tag-train.com",
+          ),
         ]
       end
 
       def self.output
         [
-          ["TAG_TRAIN_HEAD_ALREADY_TAGGED",
-           "True or false indicating if the current HEAD was already tagged before running the action",],
-          ["TAG_TRAIN_NEW_TAG_CREATED",
-           "True or false indicating if a new tag has been created",],
-          ["TAG_TRAIN_LATEST_VERSION",
-           "App version inferred from current tag",],
-          ["TAG_TRAIN_COMMIT_COUNT",
-           "Commit count in the current branch",],
-          ["TAG_TRAIN_YEAR",
-           "Year used in the weekly tag",],
-          ["TAG_TRAIN_WEEK_OF_YEAR",
-           "Week of year used in the weekly tag",],
+          [
+            "TAG_TRAIN_HEAD_ALREADY_TAGGED",
+            "True or false indicating if the current HEAD was already tagged before running the action",
+          ],
+          [
+            "TAG_TRAIN_NEW_TAG_CREATED",
+            "True or false indicating if a new tag has been created",
+          ],
+          [
+            "TAG_TRAIN_LATEST_VERSION",
+            "App version inferred from current tag",
+          ],
+          [
+            "TAG_TRAIN_COMMIT_COUNT",
+            "Commit count in the current branch",
+          ],
+          [
+            "TAG_TRAIN_YEAR",
+            "Year used in the weekly tag",
+          ],
+          [
+            "TAG_TRAIN_WEEK_OF_YEAR",
+            "Week of year used in the weekly tag",
+          ],
         ]
       end
 
