@@ -164,7 +164,7 @@ module Fastlane
             conflicting_options: [:between],
             type: Integer,
             verify_block: proc do |value|
-                            UI.user_error!(":commits_count must be >= 1") unless value.to_i >= 1
+                            UI.user_error!(":commits_count must be >= 1") if value.to_i < 1
                           end,
           ),
           FastlaneCore::ConfigItem.new(

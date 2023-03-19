@@ -68,6 +68,7 @@ module Fastlane
             path: "repos/#{repository_name}/releases?per_page=#{releases_page_quantity}&page=#{releases_page}",
             error_handlers: {
               "*" => proc do |_get_result|
+                UI.error("GitHub responded with #{result[:status]}:#{result[:body]}")
                 stop = true
               end,
             },
