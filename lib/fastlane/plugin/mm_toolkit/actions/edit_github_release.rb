@@ -73,14 +73,14 @@ module Fastlane
           http_method: "GET",
           path: "repos/#{repository_name}/releases/tags/#{tag_name}",
           error_handlers: {
-            "*" => proc do |_get_result|
+            "*" => proc do |result|
               UI.error("GitHub responded with #{result[:status]}:#{result[:body]}")
               UI.user_error!("Failed to retrieve release for tag name #{tag_name} on repository #{repository_name} from GitHub.")
             end,
           },
-        ) do |get_result|
+        ) do |result|
           UI.success("Successfully retrieved release for for tag name #{tag_name} on repository #{repository_name}!")
-          release = get_result[:json]
+          release = result[:json]
         end
 
         release
@@ -103,7 +103,7 @@ module Fastlane
               UI.user_error!("Failed to edit release for release ID #{release_id} on repository #{repository_name} from GitHub.")
             end,
           },
-        ) do |_get_result|
+        ) do |_result|
           UI.success("Successfully edited release with release ID #{release_id} on repository #{repository_name}!")
         end
       end
