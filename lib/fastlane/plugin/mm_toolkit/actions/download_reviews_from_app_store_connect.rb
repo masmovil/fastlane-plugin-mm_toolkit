@@ -4,24 +4,25 @@ require_relative '../helper/app_store_ax_connector/app_store_connect_api'
 
 module Fastlane
     module Actions
-      class DownloadSalesAndReportsFromAppStoreConnectAction < Action
+      class DownloadReviewsFromAppStoreConnectAction < Action
         def self.run(params)
       
           issuer_id = params.fetch(:issuer_id)
           key_id = params.fetch(:key_id)
           vendor_number = params.fetch(:vendor_number)
+          app_id = params.fetch(:app_id)
           private_key_content = params[:private_key_content]
           private_key_path = params[:private_key_path]
 
-          fetch(issuer_id, key_id, private_key_path, private_key_content, vendor_number)
+          fetch(issuer_id, key_id, private_key_path, private_key_content, vendor_number, app_id)
         end
   
         #####################################################
         # @!group support functions
         #####################################################
   
-        def self.fetch(issuer_id, key_id, private_key_path, private_key_content, vendor_number)
-          UI.important("Fetch sales and reports...")
+        def self.fetch(issuer_id, key_id, private_key_path, private_key_content, vendor_number, app_id)
+          UI.important("Fetch reviews...")
           private_key = nil
 
           if private_key_path.nil? && private_key_content.nil? 
@@ -39,12 +40,12 @@ module Fastlane
           begin  
             app_store_connect_account = AppStoreConnectAccount.new(issuer_id, key_id, private_key, vendor_number)
             app_store_connect_api = AppStoreConnectAPI.new(app_store_connect_account)
-            sales_and_reports = app_store_connect_api.get_sales_and_reports
+            reviews = app_store_connect_api.get_reviews(app_id)
 
-            UI.success("Sales and reports downloaded!")
+            UI.success("Reviews downloaded!")
             sales_and_reports
           rescue
-            UI.crash!("Sales and reports could not be downloaded")
+            UI.crash!("Reviews could not be downloaded")
           end
         end
   
@@ -53,31 +54,31 @@ module Fastlane
         #####################################################
   
         def self.description
-          "Downloads sales and reports from App Store Connect"
+          "Downloads reviews from App Store Connect"
         end
   
         def self.details
-          "The action downloads sales and reports from Apple Store Connect"\
-          "You can obtain the SalesAndReportCollection of an scanning the result of `app_store_connect_api.get_sales_and_reports`"
+          "The action downloads reviews from from Apple Store Connect"\
+          "You can obtain the reviews of an scanning the result of `app_store_connect_api.get_reviews(app_id)`"
         end
 
         def self.available_options
           [
             FastlaneCore::ConfigItem.new(
               key: :issuer_id,
-              env_name: "FL_DOWNLOAD_SALES_AND_REPORTS_FROM_APP_STORE_CONNECT_ISSUER_ID",
+              env_name: "FL_DOWNLOAD_REVIEWS_FROM_APP_STORE_CONNECT_ISSUER_ID",
               description: "issuer_id from Apple Store Connect",
               type: String,
             ),
             FastlaneCore::ConfigItem.new(
               key: :key_id,
-              env_name: "FL_DOWNLOAD_SALES_AND_REPORTS_FROM_APP_STORE_CONNECT_KEY_ID",
+              env_name: "FL_DOWNLOAD_REVIEWS_FROM_APP_STORE_CONNECT_KEY_ID",
               description: "key_id from Apple Store Connect",
               type: String,
             ),
             FastlaneCore::ConfigItem.new(
               key: :private_key_path,
-              env_name: "FL_DOWNLOAD_SALES_AND_REPORTS_FROM_APP_STORE_CONNECT_PRIVATE_KEY_PATH",
+              env_name: "FL_DOWNLOAD_REVIEWS_FROM_APP_STORE_CONNECT_PRIVATE_KEY_PATH",
               description: "Path to the private key file from Apple Store Connect",
               type: String,
               conflicting_options: [:private_key_content],
@@ -86,7 +87,7 @@ module Fastlane
             ),
             FastlaneCore::ConfigItem.new(
               key: :private_key_content,
-              env_name: "FL_DOWNLOAD_SALES_AND_REPORTS_FROM_APP_STORE_CONNECT_PRIVATE_KEY_CONTENT",
+              env_name: "FL_DOWNLOAD_REVIEWS_FROM_APP_STORE_CONNECT_PRIVATE_KEY_CONTENT",
               description: "Content of the private key file from Apple Store Connect",              
               type: String,
               conflicting_options: [:private_key_path],
@@ -95,8 +96,14 @@ module Fastlane
             ),
             FastlaneCore::ConfigItem.new(
               key: :vendor_number,
-              env_name: "FL_DOWNLOAD_SALES_AND_REPORTS_FROM_APP_STORE_CONNECT_VENDOR_NAME",
+              env_name: "FL_DOWNLOAD_REVIEWS_FROM_APP_STORE_CONNECT_VENDOR_NAME",
               description: "Vendor name from Apple Store Connect",
+              type: String
+            ),
+            FastlaneCore::ConfigItem.new(
+              key: :app_id,
+              env_name: "FL_DOWNLOAD_REVIEWS_FROM_APP_STORE_CONNECT_APP_ID",
+              description: "App id from Apple Store Connect",
               type: String
             ),
           ]

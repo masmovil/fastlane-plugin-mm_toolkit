@@ -2,8 +2,10 @@ require 'httparty'
 require 'jwt'
 require 'date'
 require_relative './sales_and_reports_collection'
+require_relative './reviews'
+
 class AppStoreConnectAPI
-  attr_reader :issuer_id, :key_id, :private_key_content, :vendor_number, :sales_and_reports_collection
+  attr_reader :issuer_id, :key_id, :private_key_content, :vendor_number, :sales_and_reports_collection, :reviews
   #app_store_connect_account: We need this parameter to setup basic configuration
   #brand: We need this parameter to setup basic configuration
 def initialize(app_store_connect_account)
@@ -12,6 +14,7 @@ def initialize(app_store_connect_account)
   @private_key_content = app_store_connect_account.private_key_content
   @vendor_number = app_store_connect_account.vendor_number
   @sales_and_reports_collection = nil
+  @reviews = nil
 end
 
 def private_key
@@ -95,7 +98,13 @@ def customer_reviews_path(app_id)
 end
 
 def get_reviews(app_id)
-  HTTParty.get(customer_reviews_path(app_id), headers: authorization_headers)  
+  response = HTTParty.get(customer_reviews_path(app_id), headers: authorization_headers)
+  
+  if response.code == 200
+    @reviews = CustomerReviews.new(response['data'], 'Yoigo')
+  else
+    raise "Reviews download failed! #{response.code.to_s} #{response.message.to_s}"
+  end
 end
 
 def get_sales_and_reports
