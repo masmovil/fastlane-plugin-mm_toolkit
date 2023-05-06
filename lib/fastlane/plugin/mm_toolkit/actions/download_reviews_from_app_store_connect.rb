@@ -43,7 +43,7 @@ module Fastlane
             reviews = app_store_connect_api.get_reviews(app_id)
 
             UI.success("Reviews downloaded!")
-            sales_and_reports
+            reviews
           rescue
             UI.crash!("Reviews could not be downloaded")
           end
