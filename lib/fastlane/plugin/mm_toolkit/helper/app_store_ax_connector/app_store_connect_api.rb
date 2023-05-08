@@ -6,23 +6,19 @@ require_relative './reviews'
 require_relative './customer_reviews'
 
 class AppStoreConnectAPI
-  attr_reader :issuer_id, :key_id, :private_key_content, :vendor_number, :sales_and_reports_collection, :reviews
+  attr_reader :issuer_id, :key_id, :private_key_content, :vendor_number
   #app_store_connect_account: We need this parameter to setup basic configuration
-  #brand: We need this parameter to setup basic configuration
 def initialize(app_store_connect_account)
   @issuer_id = app_store_connect_account.issuer_id
   @key_id = app_store_connect_account.key_id
   @private_key_content = app_store_connect_account.private_key_content
   @vendor_number = app_store_connect_account.vendor_number
-  @sales_and_reports_collection = nil
-  @reviews = nil
 end
 
 def private_key
    OpenSSL::PKey::EC.new(@private_key_content)
 end
 
-# Build access token
 def exp 
   Time.now.to_i + 20 * 60 # Expires in 20 minutes
 end
@@ -46,10 +42,6 @@ def token
   JWT.encode(claims, private_key, 'ES256', headers)
 end
 
-def report_date
-  Date.new(2023, 4, 23).strftime('%Y-%m-%d')
-end
-
 def app_version
   "1_0"
 end
@@ -61,13 +53,12 @@ end
 def sales_reports_path
   "salesReports"
 end
-=begin
-def sales_reports_query_params
-  "?filter[frequency]=WEEKLY&filter[reportDate]=#{report_date}&filter[reportSubType]=SUMMARY&filter[reportType]=SALES&filter[vendorNumber]=#{@vendor_number}&filter[version]=#{app_version}"
-end
-=end
 
-def sales_reports_query_params
+def sales_reports_weekly_query_params(date)
+  "?filter[frequency]=WEEKLY&filter[reportDate]=#{date}&filter[reportSubType]=SUMMARY&filter[reportType]=SALES&filter[vendorNumber]=#{@vendor_number}&filter[version]=#{app_version}"
+end
+
+def sales_reports_daily_query_params
   "?filter[frequency]=DAILY&filter[reportSubType]=SUMMARY&filter[reportType]=SALES&filter[vendorNumber]=#{@vendor_number}"
 end
 
@@ -87,6 +78,7 @@ def authorization_json_headers
     'Content-Type' => 'application/json'
   }
 end
+
 def sales_headers
   {
     'Accept': 'application/a-gzip, application/json',
@@ -98,11 +90,24 @@ def customer_reviews_path(app_id)
   base_url+"apps/#{app_id}/customerReviews"
 end
 
-def get_reviews(app_id)
-  response = HTTParty.get(customer_reviews_path(app_id), headers: authorization_headers)
+def customer_reviews_query_params
+  "?sort=-createdDate&limit=200"
+end
+
+def get_reviews(app_id, date = nil)
+  response = HTTParty.get(customer_reviews_path(app_id)+customer_reviews_query_params, headers: authorization_headers)
   
   if response.code == 200
-    @reviews = CustomerReviews.new(response['data'], 'Yoigo')
+    customer_reviews = CustomerReviews.new(response['data'])
+
+    if date.nil?
+      customer_reviews
+    else
+      customer_reviews.data.filter { |review|
+        review_date = Date.parse(review.attributes.created_date)
+        review_date == date
+      }
+    end
   else
     raise "Reviews download failed! #{response.code.to_s} #{response.message.to_s}"
   end
@@ -112,7 +117,8 @@ def get_sales_and_reports
   response = HTTParty.get(sales_path_absolute_url, headers: sales_headers)
   
   if response.code == 200
-    @sales_and_reports_collection = SalesAndReportsCollection.new(response.body)
+    sales_and_reports_collection = SalesAndReportsCollection.new(response.body)
+    sales_and_reports_collection
   else
     raise "Sales and reports download failed! #{response.code.to_s} #{response.message.to_s}"
   end

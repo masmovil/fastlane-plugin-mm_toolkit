@@ -10,4 +10,8 @@ class Review
         @attributes = ReviewAttributes.new(attributes)
         @relationships = ReviewRelationships.new(relationships)
     end
+
+    def rows
+        {rating: attributes.rating, date: attributes.created_date}
+    end  
 end

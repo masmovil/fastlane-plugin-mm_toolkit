@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 require_relative '../helper/app_store_ax_connector/app_store_connect_account'
 require_relative '../helper/app_store_ax_connector/app_store_connect_api'
+require 'date'
 
 module Fastlane
     module Actions
@@ -13,15 +14,16 @@ module Fastlane
           app_id = params.fetch(:app_id)
           private_key_content = params[:private_key_content]
           private_key_path = params[:private_key_path]
-
-          fetch(issuer_id, key_id, private_key_path, private_key_content, vendor_number, app_id)
+          filter_by_date = Date.parse(params[:filter_by_date]) if params[:filter_by_date]
+          
+          fetch(issuer_id, key_id, private_key_path, private_key_content, vendor_number, app_id, filter_by_date)
         end
   
         #####################################################
         # @!group support functions
         #####################################################
   
-        def self.fetch(issuer_id, key_id, private_key_path, private_key_content, vendor_number, app_id)
+        def self.fetch(issuer_id, key_id, private_key_path, private_key_content, vendor_number, app_id, filter_by_date)
           UI.important("Fetch reviews...")
           private_key = nil
 
@@ -40,10 +42,13 @@ module Fastlane
           begin  
             app_store_connect_account = AppStoreConnectAccount.new(issuer_id, key_id, private_key, vendor_number)
             app_store_connect_api = AppStoreConnectAPI.new(app_store_connect_account)
-            reviews = app_store_connect_api.get_reviews(app_id)
+            reviews = app_store_connect_api.get_reviews(app_id, filter_by_date)
 
             UI.success("Reviews downloaded!")
             reviews
+            puts reviews.collect { |review|
+              puts review.rows
+            }
           rescue
             UI.crash!("Reviews could not be downloaded")
           end
@@ -105,6 +110,14 @@ module Fastlane
               env_name: "FL_DOWNLOAD_REVIEWS_FROM_APP_STORE_CONNECT_APP_ID",
               description: "App id from Apple Store Connect",
               type: String
+            ),
+            FastlaneCore::ConfigItem.new(
+              key: :filter_by_date,
+              env_name: "FL_DOWNLOAD_REVIEWS_FROM_APP_STORE_CONNECT_FILTER_BY_DATE",
+              description: "The parameter filter reviews only by this date",
+              type: String,
+              optional: true,
+              default_value: nil,
             ),
           ]
         end

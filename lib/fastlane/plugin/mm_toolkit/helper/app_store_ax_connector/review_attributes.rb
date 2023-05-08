@@ -6,7 +6,7 @@ class ReviewAttributes
         @title = file['title']
         @body = file['body']
         @reviewer_nickname = file['reviewerNickname']
-        @created_date = file['created_date']
+        @created_date = file['createdDate']
         @territory = file['territory']
     end
 end
