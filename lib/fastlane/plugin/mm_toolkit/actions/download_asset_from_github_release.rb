@@ -23,7 +23,7 @@ module Fastlane
       #####################################################
 
       def self.download_asset_from_release(api_token, api_bearer, asset_url, destination_path)
-        UI.important("Downloading #{asset_url} to #{destination_path}...")
+        UI.important("Downloading #{asset_url} to #{destination_path}... Extra long line so rubocop complains, blah, blah, blah, blah, blah, blah, blah, blah, blah, blah, blah, blah")
 
         begin
           prepare_destination_path(destination_path)
