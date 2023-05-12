@@ -1,12 +1,13 @@
 require "google/cloud/bigquery"
 
 class BigQueryController
-  attr_reader :project_id, :dataset_id, :table_id, :bigquery
-
-#Proyect id related with BQ
-#Dataset id related with BQ
-#Table id related with BQ
-def initialize(project_id, dataset_id, table_id)
+  attr_reader :credentials, :project_id, :dataset_id, :table_id, :bigquery
+#credentials related with BQ
+#project_id related with BQ
+#dataset_id related with BQ
+#table_id related with BQ
+def initialize(credentials, project_id, dataset_id, table_id)
+    @credentials = credentials
     @project_id = project_id
     @dataset_id = dataset_id
     @table_id = table_id
@@ -16,18 +17,15 @@ def initialize(project_id, dataset_id, table_id)
     setup
 end
 
-# Assign route for credentials archive
-ENV["GOOGLE_APPLICATION_CREDENTIALS"] =  "#{__dir__}/appstore-test-383407-6b07cf0b74a0.json"
+#ENV["GOOGLE_APPLICATION_CREDENTIALS"] =  "#{__dir__}/#{credentials}"
 
 def setup
-  @bigquery = Google::Cloud::Bigquery.new(project: @project_id)
+  @bigquery = Google::Cloud::Bigquery.new(project: @project_id, credentials: @credentials)
   @dataset = bigquery.dataset(@dataset_id)
   @table = @dataset.table(@table_id)
-  puts 'Dataset and Table Loaded'
 end
 
 def insert(data)
-  puts "To save #{data}"
   if !@dataset.exists?
     raise "Error dataset don't exist - #{result.error}"
   end
