@@ -63,7 +63,7 @@ module Fastlane
         end
   
         def self.details
-          "The action downloads reviews from from Apple Store Connect"\
+          "The action downloads reviews from from Apple Store Connect. "\
           "You can obtain the reviews by checking the result of the action"
         end
 
