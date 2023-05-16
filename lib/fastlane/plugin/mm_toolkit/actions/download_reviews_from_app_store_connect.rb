@@ -44,7 +44,7 @@ module Fastlane
             app_store_connect_api = AppStoreConnectAPI.new(app_store_connect_account)
             reviews = app_store_connect_api.get_reviews(app_id, filter_by_date)
 
-            UI.success("Reviews downloaded!")
+            UI.success("Reviews fetched!")
             reviews
             puts reviews.collect { |review|
               puts review.rows
