@@ -24,7 +24,7 @@ module Fastlane
         #####################################################
   
         def self.fetch(issuer_id, key_id, private_key_path, private_key_content, vendor_number, app_id, filter_by_date)
-          UI.important("Fetch reviews...")
+          UI.important("Fetching reviews...")
           private_key = nil
 
           if private_key_path.nil? && private_key_content.nil? 
