@@ -64,7 +64,7 @@ module Fastlane
   
         def self.details
           "The action downloads reviews from from Apple Store Connect"\
-          "You can obtain the reviews of an scanning the result of `app_store_connect_api.get_reviews(app_id)`"
+          "You can obtain the reviews by checking the result of the action"
         end
 
         def self.available_options
