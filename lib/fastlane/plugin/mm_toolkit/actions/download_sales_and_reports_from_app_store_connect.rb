@@ -113,7 +113,7 @@ module Fastlane
         def self.category
           # Check https://github.com/fastlane/fastlane/blob/0d1aa50045d57975d8b9e5d5f1f489d82ee0f437/fastlane/lib/fastlane/action.rb#L6
           # for available categories
-          :source_control
+          :app_store_connect
         end
       end
     end
