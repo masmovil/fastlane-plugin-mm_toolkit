@@ -24,13 +24,13 @@ Gem::Specification.new do |spec|
   # spec.add_dependency 'your-dependency', '~> 1.0.0'
 
   spec.add_dependency("addressable", ">= 2.8.0")
-  spec.add_dependency("down")
-  spec.add_dependency("redcarpet", ">= 3.5.1")
-  spec.add_dependency("net-http", "~> 0.3.2")
   spec.add_dependency("csv")
+  spec.add_dependency("down")
   spec.add_dependency("google-cloud-bigquery")
-  spec.add_dependency('httparty', '~> 0.21.0')
-  
+  spec.add_dependency("httparty", "~> 0.21.0")
+  spec.add_dependency("net-http", "~> 0.3.2")
+  spec.add_dependency("redcarpet", ">= 3.5.1")
+
   spec.add_development_dependency("bundler")
   spec.add_development_dependency("fastlane", ">= 2.172.0")
   spec.add_development_dependency("pry")

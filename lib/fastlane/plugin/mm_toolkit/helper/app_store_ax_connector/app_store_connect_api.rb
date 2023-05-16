@@ -1,127 +1,129 @@
-require 'httparty'
-require 'jwt'
-require 'date'
-require_relative './sales_and_reports_collection'
-require_relative './reviews'
-require_relative './customer_reviews'
+# frozen_string_literal: true
+
+require "httparty"
+require "jwt"
+require "date"
+require_relative "./sales_and_reports_collection"
+require_relative "./reviews"
+require_relative "./customer_reviews"
 
 class AppStoreConnectAPI
   attr_reader :issuer_id, :key_id, :private_key_content, :vendor_number
-  #app_store_connect_account: We need this parameter to setup basic configuration
-def initialize(app_store_connect_account)
-  @issuer_id = app_store_connect_account.issuer_id
-  @key_id = app_store_connect_account.key_id
-  @private_key_content = app_store_connect_account.private_key_content
-  @vendor_number = app_store_connect_account.vendor_number
-end
 
-def private_key
-   OpenSSL::PKey::EC.new(@private_key_content)
-end
+  # app_store_connect_account: We need this parameter to setup basic configuration
+  def initialize(app_store_connect_account)
+    @issuer_id = app_store_connect_account.issuer_id
+    @key_id = app_store_connect_account.key_id
+    @private_key_content = app_store_connect_account.private_key_content
+    @vendor_number = app_store_connect_account.vendor_number
+  end
 
-def exp 
-  Time.now.to_i + 20 * 60 # Expires in 20 minutes
-end
+  def private_key
+    OpenSSL::PKey::EC.new(@private_key_content)
+  end
 
-def headers
-  {
-    'kid' => key_id,
-    'alg' => 'ES256'
-  }
-end
+  def exp
+    Time.now.to_i + 20 * 60 # Expires in 20 minutes
+  end
 
-def claims 
-  {
-    'iss' => @issuer_id,
-    'exp' => exp,
-    'aud' => 'appstoreconnect-v1'
-  }
-end
+  def headers
+    {
+      "kid" => key_id,
+      "alg" => "ES256",
+    }
+  end
 
-def token 
-  JWT.encode(claims, private_key, 'ES256', headers)
-end
+  def claims
+    {
+      "iss" => @issuer_id,
+      "exp" => exp,
+      "aud" => "appstoreconnect-v1",
+    }
+  end
 
-def app_version
-  "1_0"
-end
+  def token
+    JWT.encode(claims, private_key, "ES256", headers)
+  end
 
-def base_url
-  "https://api.appstoreconnect.apple.com/v1/"
-end
+  def app_version
+    "1_0"
+  end
 
-def sales_reports_path
-  "salesReports"
-end
+  def base_url
+    "https://api.appstoreconnect.apple.com/v1/"
+  end
 
-def sales_reports_weekly_query_params(date)
-  "?filter[frequency]=WEEKLY&filter[reportDate]=#{date}&filter[reportSubType]=SUMMARY&filter[reportType]=SALES&filter[vendorNumber]=#{@vendor_number}&filter[version]=#{app_version}"
-end
+  def sales_reports_path
+    "salesReports"
+  end
 
-def sales_reports_daily_query_params
-  "?filter[frequency]=DAILY&filter[reportSubType]=SUMMARY&filter[reportType]=SALES&filter[vendorNumber]=#{@vendor_number}"
-end
+  def sales_reports_weekly_query_params(date)
+    "?filter[frequency]=WEEKLY&filter[reportDate]=#{date}&filter[reportSubType]=SUMMARY&filter[reportType]=SALES&filter[vendorNumber]=#{@vendor_number}&filter[version]=#{app_version}"
+  end
 
-def sales_path_absolute_url
-  base_url+sales_reports_path+sales_reports_query_params
-end
+  def sales_reports_daily_query_params
+    "?filter[frequency]=DAILY&filter[reportSubType]=SUMMARY&filter[reportType]=SALES&filter[vendorNumber]=#{@vendor_number}"
+  end
 
-def authorization_headers
-  {
-    'Authorization' => "Bearer #{token}"
-  }
-end
+  def sales_path_absolute_url
+    base_url + sales_reports_path + sales_reports_query_params
+  end
 
-def authorization_json_headers
-  {
-    'Authorization' => "Bearer #{token}",
-    'Content-Type' => 'application/json'
-  }
-end
+  def authorization_headers
+    {
+      "Authorization" => "Bearer #{token}",
+    }
+  end
 
-def sales_headers
-  {
-    'Accept': 'application/a-gzip, application/json',
-    'Authorization' => "Bearer #{token}"
-  }
-end
+  def authorization_json_headers
+    {
+      "Authorization" => "Bearer #{token}",
+      "Content-Type" => "application/json",
+    }
+  end
 
-def customer_reviews_path(app_id)
-  base_url+"apps/#{app_id}/customerReviews"
-end
+  def sales_headers
+    {
+      "Accept": "application/a-gzip, application/json",
+      "Authorization" => "Bearer #{token}",
+    }
+  end
 
-def customer_reviews_query_params
-  "?sort=-createdDate&limit=200"
-end
+  def customer_reviews_path(app_id)
+    base_url + "apps/#{app_id}/customerReviews"
+  end
 
-def get_reviews(app_id, date = nil)
-  response = HTTParty.get(customer_reviews_path(app_id)+customer_reviews_query_params, headers: authorization_headers)
-  
-  if response.code == 200
-    customer_reviews = CustomerReviews.new(response['data'])
+  def customer_reviews_query_params
+    "?sort=-createdDate&limit=200"
+  end
 
-    if date.nil?
-      customer_reviews
+  def get_reviews(app_id, date = nil)
+    response = HTTParty.get(customer_reviews_path(app_id) + customer_reviews_query_params, headers: authorization_headers)
+
+    if response.code == 200
+      customer_reviews = CustomerReviews.new(response["data"])
+
+      if date.nil?
+        customer_reviews
+      else
+        customer_reviews.data.filter do |review|
+          review_date = Date.parse(review.attributes.created_date)
+          review_date == date
+        end
+      end
     else
-      customer_reviews.data.filter { |review|
-        review_date = Date.parse(review.attributes.created_date)
-        review_date == date
-      }
+      raise "Reviews download failed! #{response.code} #{response.message}"
     end
-  else
-    raise "Reviews download failed! #{response.code.to_s} #{response.message.to_s}"
   end
-end
 
-def get_sales_and_reports
-  response = HTTParty.get(sales_path_absolute_url, headers: sales_headers)
-  
-  if response.code == 200
-    sales_and_reports_collection = SalesAndReportsCollection.new(response.body)
-    sales_and_reports_collection
-  else
-    raise "Sales and reports download failed! #{response.code.to_s} #{response.message.to_s}"
+  def get_sales_and_reports
+    response = HTTParty.get(sales_path_absolute_url, headers: sales_headers)
+
+    if response.code == 200
+      sales_and_reports_collection = SalesAndReportsCollection.new(response.body)
+      sales_and_reports_collection
+    else
+      raise "Sales and reports download failed! #{response.code} #{response.message}"
+    end
   end
-end
-
 end
