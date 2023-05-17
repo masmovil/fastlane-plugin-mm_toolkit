@@ -21,7 +21,7 @@ module Fastlane
         #####################################################
   
         def self.fetch(issuer_id, key_id, private_key_path, private_key_content, vendor_number)
-          UI.important("Fetch sales and reports...")
+          UI.important("Fetching sales and reports...")
           private_key = nil
 
           if private_key_path.nil? && private_key_content.nil? 
