@@ -57,7 +57,7 @@ module Fastlane
         end
   
         def self.details
-          "The action downloads sales and reports from Apple Store Connect"\
+          "The action downloads sales and reports from Apple Store Connect. "\
           "You can obtain the sales and reports data by checking the action result."
         end
 
