@@ -44,7 +44,7 @@ module Fastlane
             UI.success("Sales and reports fetched!")
             sales_and_reports
           rescue
-            UI.crash!("Sales and reports could not be downloaded")
+            UI.crash!("Sales and reports could not be fetched")
           end
         end
   
