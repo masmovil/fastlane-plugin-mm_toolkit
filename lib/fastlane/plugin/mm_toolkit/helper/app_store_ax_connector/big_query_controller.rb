@@ -42,7 +42,7 @@ class BigQueryController
         raise "Failed to insert #{response.error_rows.count} rows"
       end
     else
-      raise "Error table doesn't exist or the data to try insert in BBDD previously exists"
+      raise "Error table doesn't exist or the data to try insert in DB previously exists"
     end
   end
 end

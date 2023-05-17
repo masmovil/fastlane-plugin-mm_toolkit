@@ -12,7 +12,6 @@ class Reviews
   end
 
   def self.from_json(file)
-    puts file
     Reviews.new(file["data"], file["links"], file["meta"])
   end
 end
