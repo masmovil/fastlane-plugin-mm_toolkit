@@ -50,7 +50,7 @@ module Fastlane
               puts review.rows
             }
           rescue
-            UI.crash!("Reviews could not be downloaded")
+            UI.crash!("Reviews could not be fetched")
           end
         end
   
