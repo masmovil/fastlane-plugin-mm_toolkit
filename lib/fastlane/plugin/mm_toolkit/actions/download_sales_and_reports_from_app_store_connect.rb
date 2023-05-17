@@ -21,7 +21,7 @@ module Fastlane
         #####################################################
   
         def self.fetch(issuer_id, key_id, private_key_path, private_key_content, vendor_number)
-          UI.important("Fetch sales and reports...")
+          UI.important("Fetching sales and reports...")
           private_key = nil
 
           if private_key_path.nil? && private_key_content.nil? 
@@ -41,10 +41,10 @@ module Fastlane
             app_store_connect_api = AppStoreConnectAPI.new(app_store_connect_account)
             sales_and_reports = app_store_connect_api.get_sales_and_reports
 
-            UI.success("Sales and reports downloaded!")
+            UI.success("Sales and reports fetched!")
             sales_and_reports
           rescue
-            UI.crash!("Sales and reports could not be downloaded")
+            UI.crash!("Sales and reports could not be fetched")
           end
         end
   
@@ -57,8 +57,8 @@ module Fastlane
         end
   
         def self.details
-          "The action downloads sales and reports from Apple Store Connect"\
-          "You can obtain the SalesAndReportCollection of an scanning the result of `app_store_connect_api.get_sales_and_reports`"
+          "The action downloads sales and reports from Apple Store Connect. "\
+          "You can obtain the sales and reports data by checking the action result."
         end
 
         def self.available_options
