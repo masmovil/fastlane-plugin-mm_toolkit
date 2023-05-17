@@ -58,7 +58,7 @@ module Fastlane
   
         def self.details
           "The action downloads sales and reports from Apple Store Connect"\
-          "You can obtain the SalesAndReportCollection of an scanning the result of `app_store_connect_api.get_sales_and_reports`"
+          "You can obtain the sales and reports data by checking the action result."
         end
 
         def self.available_options
