@@ -41,7 +41,7 @@ module Fastlane
             app_store_connect_api = AppStoreConnectAPI.new(app_store_connect_account)
             sales_and_reports = app_store_connect_api.get_sales_and_reports
 
-            UI.success("Sales and reports downloaded!")
+            UI.success("Sales and reports fetched!")
             sales_and_reports
           rescue
             UI.crash!("Sales and reports could not be downloaded")
