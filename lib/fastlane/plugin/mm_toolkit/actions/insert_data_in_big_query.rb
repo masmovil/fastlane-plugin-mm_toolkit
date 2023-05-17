@@ -20,11 +20,15 @@ module Fastlane
       #####################################################
 
       def self.setup(credentials, project_id, dataset_id, table_id, rows)
-        UI.important("Setup Big Query...")
-        big_query_controller = BigQueryController.new(credentials, project_id, dataset_id, table_id)
-        UI.important("Insert rows in Big Query...")
+      begin
+        UI.important("Setting up BigQuery...")
+        big_query_controller = BigQueryController.new(credentials, project_id, dataset_id, table_id)      
+        UI.important("Inserting rows in BigQuery...")
         big_query_controller.insert(rows)
-        UI.success("Succesfully insert rows in Big Query...!")
+        UI.success("Succesfully inserted rows in BigQuery!")
+      rescue
+        UI.crash!("Error when trying to insert rows in BigQuery")
+      end
       end
 
       #####################################################
@@ -32,11 +36,11 @@ module Fastlane
       #####################################################
 
       def self.description
-        "Insert rows in Big Query"
+        "Insert rows in BigQuery"
       end
 
       def self.details
-        "The action inserts rows in big query"
+        "The action inserts rows in BigQuery"
       end
 
       def self.available_options
@@ -51,13 +55,13 @@ module Fastlane
           FastlaneCore::ConfigItem.new(
             key: :project_id,
             env_name: "FL_INSERT_ROWS_IN_BIG_QUERY_PROJECT_ID",
-            description: "Big query project id",
+            description: "BigQuery project id",
             type: String,
           ),
           FastlaneCore::ConfigItem.new(
             key: :dataset_id,
             env_name: "FL_INSERT_ROWS_IN_BIG_QUERY_DATASET_ID",
-            description: "Big query dataset id",
+            description: "BigQuery dataset id",
             type: String,
           ),
           FastlaneCore::ConfigItem.new(
@@ -68,9 +72,8 @@ module Fastlane
           ),
           FastlaneCore::ConfigItem.new(
             key: :rows,
-            env_name: "FL_INSERT_ROWS_IN_BIG_QUERY_TABLE_ID",
-            description: "Rows to insert in Big query",
-            type: Hash,
+            env_name: "FL_INSERT_ROWS_IN_BIG_QUERY_ROWS",
+            description: "Rows to insert in BigQuery. The format must be [{"key" => "value", ...}, ...] representing your table scheme",
           ),
         ]
       end
@@ -86,7 +89,7 @@ module Fastlane
       def self.category
         # Check https://github.com/fastlane/fastlane/blob/0d1aa50045d57975d8b9e5d5f1f489d82ee0f437/fastlane/lib/fastlane/action.rb#L6
         # for available categories
-        :source_control
+        :misc
       end
     end
   end

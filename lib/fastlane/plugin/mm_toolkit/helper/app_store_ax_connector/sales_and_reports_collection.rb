@@ -24,7 +24,6 @@ class SalesAndReportsCollection
 
   def rows
     date_to_save = Date.today
-    # Filter with 1F because 1F is a new downloads
     items_grouped_by_brand = @items.filter { |item| item.product_type_identifier == FREE_OR_PAID_APP }.group_by(&:sku)
     items_grouped_by_brand.map do |brand, items|
       total_units = items.map { |item| item.units.to_i }.reduce(0, :+)

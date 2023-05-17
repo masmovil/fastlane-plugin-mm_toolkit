@@ -9,8 +9,11 @@ require_relative "./customer_reviews"
 
 class AppStoreConnectAPI
   attr_reader :issuer_id, :key_id, :private_key_content, :vendor_number
+  
+  JWT_ALG = "ES256"
+  APP_VERSION = "1_0"
+  BASE_URL = "https://api.appstoreconnect.apple.com/v1/"
 
-  # app_store_connect_account: We need this parameter to setup basic configuration
   def initialize(app_store_connect_account)
     @issuer_id = app_store_connect_account.issuer_id
     @key_id = app_store_connect_account.key_id
@@ -29,7 +32,7 @@ class AppStoreConnectAPI
   def headers
     {
       "kid" => key_id,
-      "alg" => "ES256",
+      "alg" => JWT_ALG,
     }
   end
 
@@ -42,15 +45,7 @@ class AppStoreConnectAPI
   end
 
   def token
-    JWT.encode(claims, private_key, "ES256", headers)
-  end
-
-  def app_version
-    "1_0"
-  end
-
-  def base_url
-    "https://api.appstoreconnect.apple.com/v1/"
+    JWT.encode(claims, private_key, JWT_ALG, headers)
   end
 
   def sales_reports_path
@@ -58,7 +53,7 @@ class AppStoreConnectAPI
   end
 
   def sales_reports_weekly_query_params(date)
-    "?filter[frequency]=WEEKLY&filter[reportDate]=#{date}&filter[reportSubType]=SUMMARY&filter[reportType]=SALES&filter[vendorNumber]=#{@vendor_number}&filter[version]=#{app_version}"
+    "?filter[frequency]=WEEKLY&filter[reportDate]=#{date}&filter[reportSubType]=SUMMARY&filter[reportType]=SALES&filter[vendorNumber]=#{@vendor_number}&filter[version]=#{APP_VERSION}"
   end
 
   def sales_reports_daily_query_params
@@ -66,7 +61,7 @@ class AppStoreConnectAPI
   end
 
   def sales_path_absolute_url
-    base_url + sales_reports_path + sales_reports_query_params
+    BASE_URL + sales_reports_path + sales_reports_daily_query_params
   end
 
   def authorization_headers
@@ -90,7 +85,7 @@ class AppStoreConnectAPI
   end
 
   def customer_reviews_path(app_id)
-    base_url + "apps/#{app_id}/customerReviews"
+    BASE_URL + "apps/#{app_id}/customerReviews"
   end
 
   def customer_reviews_query_params
@@ -104,7 +99,7 @@ class AppStoreConnectAPI
       customer_reviews = CustomerReviews.new(response["data"])
 
       if date.nil?
-        customer_reviews
+        customer_reviews.data
       else
         customer_reviews.data.filter do |review|
           review_date = Date.parse(review.attributes.created_date)
@@ -120,8 +115,7 @@ class AppStoreConnectAPI
     response = HTTParty.get(sales_path_absolute_url, headers: sales_headers)
 
     if response.code == 200
-      sales_and_reports_collection = SalesAndReportsCollection.new(response.body)
-      sales_and_reports_collection
+      SalesAndReportsCollection.new(response.body)
     else
       raise "Sales and reports download failed! #{response.code} #{response.message}"
     end

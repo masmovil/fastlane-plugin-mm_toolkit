@@ -5,10 +5,6 @@ require "google/cloud/bigquery"
 class BigQueryController
   attr_reader :credentials, :project_id, :dataset_id, :table_id, :bigquery
 
-  # credentials related with BQ
-  # project_id related with BQ
-  # dataset_id related with BQ
-  # table_id related with BQ
   def initialize(credentials, project_id, dataset_id, table_id)
     @credentials = credentials
     @project_id = project_id
@@ -20,8 +16,6 @@ class BigQueryController
     setup
   end
 
-  # ENV["GOOGLE_APPLICATION_CREDENTIALS"] =  "#{__dir__}/#{credentials}"
-
   def setup
     @bigquery = Google::Cloud::Bigquery.new(project: @project_id, credentials: @credentials)
     @dataset = bigquery.dataset(@dataset_id)
@@ -30,15 +24,13 @@ class BigQueryController
 
   def insert(data)
     unless @dataset.exists?
-      raise "Error dataset doesn't exist - #{result.error}"
+      raise "Error: dataset doesn't exist - #{result.error}"
     end
 
     if @table.exists?
       response = @table.insert(data)
 
-      if response.success?
-        puts "Inserted rows successfully"
-      else
+      if !response.success?
         raise "Failed to insert #{response.error_rows.count} rows"
       end
     else
