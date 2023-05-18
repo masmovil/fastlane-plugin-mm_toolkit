@@ -9,10 +9,11 @@ require_relative "./customer_reviews"
 
 class AppStoreConnectAPI
   attr_reader :issuer_id, :key_id, :private_key_content, :vendor_number
-  
+
   JWT_ALG = "ES256"
   APP_VERSION = "1_0"
-  BASE_URL = "https://api.appstoreconnect.apple.com/v1/"
+  HOST = "api.appstoreconnect.apple.com"
+  API_VERSION = "v1"
 
   def initialize(app_store_connect_account)
     @issuer_id = app_store_connect_account.issuer_id
@@ -20,6 +21,37 @@ class AppStoreConnectAPI
     @private_key_content = app_store_connect_account.private_key_content
     @vendor_number = app_store_connect_account.vendor_number
   end
+
+  def get_reviews(app_id, date = nil)
+    response = HTTParty.get(customer_reviews_url(app_id), headers: authorization_headers)
+
+    if response.code == 200
+      customer_reviews = CustomerReviews.new(response["data"])
+
+      if date.nil?
+        customer_reviews.data
+      else
+        customer_reviews.data.filter do |review|
+          review_date = Date.parse(review.attributes.created_date)
+          review_date == date
+        end
+      end
+    else
+      raise "Reviews download failed! #{response.code} #{response.message}"
+    end
+  end
+
+  def get_sales_and_reports
+    response = HTTParty.get(sales_reports_url, headers: sales_headers)
+
+    if response.code == 200
+      SalesAndReportsCollection.new(response.body)
+    else
+      raise "Sales and reports download failed! #{response.code} #{response.message}"
+    end
+  end
+
+  private
 
   def private_key
     OpenSSL::PKey::EC.new(@private_key_content)
@@ -48,20 +80,25 @@ class AppStoreConnectAPI
     JWT.encode(claims, private_key, JWT_ALG, headers)
   end
 
-  def sales_reports_path
-    "salesReports"
-  end
+  def sales_reports_url(date = nil)
+    path = "/#{API_VERSION}/salesReports"
 
-  def sales_reports_weekly_query_params(date)
-    "?filter[frequency]=WEEKLY&filter[reportDate]=#{date}&filter[reportSubType]=SUMMARY&filter[reportType]=SALES&filter[vendorNumber]=#{@vendor_number}&filter[version]=#{APP_VERSION}"
-  end
+    query_params = {
+      "filter[reportType]" => "SALES",
+      "filter[reportSubType]" => "SUMMARY",
+      "filter[vendorNumber]" => @vendor_number.to_s,
+    }
 
-  def sales_reports_daily_query_params
-    "?filter[frequency]=DAILY&filter[reportSubType]=SUMMARY&filter[reportType]=SALES&filter[vendorNumber]=#{@vendor_number}"
-  end
+    if !date.nil?
+      query_params["filter[frequency]"] = "WEEKLY"
+      query_params["filter[reportDate]"] = date
+    else
+      query_params["filter[frequency]"] = "DAILY"
+    end
 
-  def sales_path_absolute_url
-    BASE_URL + sales_reports_path + sales_reports_daily_query_params
+    query = URI.encode_www_form(query_params)
+
+    URI::HTTPS.build(host: HOST, path: path, query: query)
   end
 
   def authorization_headers
@@ -84,40 +121,16 @@ class AppStoreConnectAPI
     }
   end
 
-  def customer_reviews_path(app_id)
-    BASE_URL + "apps/#{app_id}/customerReviews"
-  end
+  def customer_reviews_url(app_id)
+    path = "/#{API_VERSION}/apps/#{app_id}/customerReviews"
 
-  def customer_reviews_query_params
-    "?sort=-createdDate&limit=200"
-  end
+    query_params = {
+      "sort" => "-createdDate",
+      "limit" => "200",
+    }
 
-  def get_reviews(app_id, date = nil)
-    response = HTTParty.get(customer_reviews_path(app_id) + customer_reviews_query_params, headers: authorization_headers)
+    query = URI.encode_www_form(query_params)
 
-    if response.code == 200
-      customer_reviews = CustomerReviews.new(response["data"])
-
-      if date.nil?
-        customer_reviews.data
-      else
-        customer_reviews.data.filter do |review|
-          review_date = Date.parse(review.attributes.created_date)
-          review_date == date
-        end
-      end
-    else
-      raise "Reviews download failed! #{response.code} #{response.message}"
-    end
-  end
-
-  def get_sales_and_reports
-    response = HTTParty.get(sales_path_absolute_url, headers: sales_headers)
-
-    if response.code == 200
-      SalesAndReportsCollection.new(response.body)
-    else
-      raise "Sales and reports download failed! #{response.code} #{response.message}"
-    end
+    URI::HTTPS.build(host: HOST, path: path, query: query)
   end
 end

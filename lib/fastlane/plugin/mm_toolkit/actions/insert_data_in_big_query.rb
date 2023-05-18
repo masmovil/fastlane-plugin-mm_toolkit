@@ -20,15 +20,13 @@ module Fastlane
       #####################################################
 
       def self.setup(credentials, project_id, dataset_id, table_id, rows)
-      begin
         UI.important("Setting up BigQuery...")
-        big_query_controller = BigQueryController.new(credentials, project_id, dataset_id, table_id)      
+        big_query_controller = BigQueryController.new(credentials, project_id, dataset_id, table_id)
         UI.important("Inserting rows in BigQuery...")
         big_query_controller.insert(rows)
         UI.success("Succesfully inserted rows in BigQuery!")
       rescue
         UI.crash!("Error when trying to insert rows in BigQuery")
-      end
       end
 
       #####################################################
@@ -73,7 +71,7 @@ module Fastlane
           FastlaneCore::ConfigItem.new(
             key: :rows,
             env_name: "FL_INSERT_ROWS_IN_BIG_QUERY_ROWS",
-            description: "Rows to insert in BigQuery. The format must be [{"key" => "value", ...}, ...] representing your table scheme",
+            description: "Rows to insert in BigQuery. The format must be [{\"key\" => \"value\", ...}, ...] representing your table scheme",
           ),
         ]
       end

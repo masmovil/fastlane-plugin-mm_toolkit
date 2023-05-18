@@ -30,7 +30,7 @@ class BigQueryController
     if @table.exists?
       response = @table.insert(data)
 
-      if !response.success?
+      unless response.success?
         raise "Failed to insert #{response.error_rows.count} rows"
       end
     else
