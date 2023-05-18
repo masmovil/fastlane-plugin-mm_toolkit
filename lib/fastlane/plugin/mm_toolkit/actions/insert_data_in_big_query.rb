@@ -73,7 +73,7 @@ module Fastlane
           FastlaneCore::ConfigItem.new(
             key: :rows,
             env_name: "FL_INSERT_ROWS_IN_BIG_QUERY_ROWS",
-            description: "Rows to insert in BigQuery. The format must be [{"key" => "value", ...}, ...] representing your table scheme",
+            description: "Rows to insert in BigQuery. The format must be [{\"key\" => \"value\", ...}, ...] representing your table scheme",
           ),
         ]
       end
