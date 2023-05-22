@@ -95,9 +95,9 @@ module Fastlane
           ),
           FastlaneCore::ConfigItem.new(
             key: :vendor_number,
-            env_name: "FL_DOWNLOAD_SALES_AND_REPORTS_FROM_APP_STORE_CONNECT_VENDOR_NAME",
-            description: "Vendor name from Apple Store Connect",
-            type: String
+            env_name: "FL_DOWNLOAD_SALES_AND_REPORTS_FROM_APP_STORE_CONNECT_VENDOR_NUMBER",
+            description: "Vendor number from Apple Store Connect",
+            type: Integer
           ),
         ]
       end
