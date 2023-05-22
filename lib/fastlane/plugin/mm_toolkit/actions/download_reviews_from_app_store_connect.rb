@@ -46,9 +46,6 @@ module Fastlane
 
           UI.success("Reviews fetched!")
           reviews
-          puts reviews.collect { |review|
-            puts review.rows
-          }
         rescue
           UI.crash!("Reviews could not be fetched")
         end
