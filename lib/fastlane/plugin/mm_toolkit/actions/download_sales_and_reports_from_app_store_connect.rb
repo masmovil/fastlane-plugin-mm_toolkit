@@ -44,7 +44,7 @@ module Fastlane
           UI.success("Sales and reports fetched!")
           sales_and_reports
         rescue => e
-          UI.crash!("Sales and reports could not be fetched: #{e}")
+          UI.crash!("Sales and reports could not be fetched: #{e}/n #{e.backtrace}")
         end
       end
 

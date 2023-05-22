@@ -47,7 +47,7 @@ module Fastlane
           UI.success("Reviews fetched!")
           reviews
         rescue => e
-          UI.crash!("Reviews could not be fetched: #{e}")
+          UI.crash!("Reviews could not be fetched: #{e}/n #{e.backtrace}")
         end
       end
 
