@@ -48,6 +48,7 @@ module Fastlane
             env_name: "FL_INSERT_ROWS_IN_BIG_QUERY_CREDENTIALS",
             description: "String or Hash with route or content at credentials file if you need more info go to https://www.rubydoc.info/gems/google-cloud-bigquery/Google/Cloud/Bigquery#new-class_method",
             optional: true,
+            is_string: false
             default_value: ENV["GOOGLE_APPLICATION_CREDENTIALS"],
           ),
           FastlaneCore::ConfigItem.new(
