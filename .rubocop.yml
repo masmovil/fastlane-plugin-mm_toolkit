@@ -20,3 +20,6 @@ Style/ClassMethodsDefinitions:
 Layout/LineLength:
   Max: 140
   AllowedPatterns: ['^\s*#']
+
+Metrics/ParameterLists:
+  Max: 30

@@ -25,7 +25,6 @@ module Fastlane
       # @!group support functions
       #####################################################
 
-      # rubocop:disable Metrics/ParameterLists
       def self.send_message(hook_url, text, username, icon_url, channel, icon_emoji, attachments, props, type)
         UI.user_error!("You must set a 'text' or non-empty 'attachments' in order to send a message") unless has_required_fields?(
           text,
@@ -63,7 +62,6 @@ module Fastlane
           UI.error("Exception sending message to Mattermost: #{exception}")
         end
       end
-      # rubocop:enable Metrics/ParameterLists
 
       def self.working_url?(url)
         uri = URI.parse(url)

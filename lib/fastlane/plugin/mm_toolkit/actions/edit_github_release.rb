@@ -36,7 +36,6 @@ module Fastlane
       # @!group support functions
       #####################################################
 
-      # rubocop:disable Metrics/ParameterLists
       def self.edit_github_release(
         api_token,
         api_bearer,
@@ -59,7 +58,6 @@ module Fastlane
 
         compose_edit_github_release(api_token, api_bearer, server_url, repository_name, release_id, release_data)
       end
-      # rubocop:enable Metrics/ParameterLists
 
       def self.get_release_by_tag_name(api_token, api_bearer, server_url, repository_name, tag_name)
         UI.important("Trying to get release with tag name #{tag_name} of repository #{repository_name}...")
@@ -86,7 +84,6 @@ module Fastlane
         release
       end
 
-      # rubocop:disable Metrics/ParameterLists
       def self.compose_edit_github_release(api_token, api_bearer, server_url, repository_name, release_id, release_data)
         UI.important("Trying to edit release notes of release ID #{release_id} on repository #{repository_name}...")
 
@@ -107,8 +104,6 @@ module Fastlane
           UI.success("Successfully edited release with release ID #{release_id} on repository #{repository_name}!")
         end
       end
-      # rubocop:enable Metrics/ParameterLists
-
       #####################################################
       # @!group Documentation
       #####################################################
