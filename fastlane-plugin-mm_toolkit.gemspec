@@ -28,7 +28,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency("down")
   spec.add_dependency("google-cloud-bigquery")
   spec.add_dependency("httparty", "~> 0.21.0")
-  spec.add_dependency("net-http", "~> 0.3.2")
   spec.add_dependency("redcarpet", ">= 3.5.1")
 
   spec.add_development_dependency("danger")
