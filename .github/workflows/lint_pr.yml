@@ -16,7 +16,7 @@ jobs:
         with:
           access_token: ${{ github.token }}
 
-  lint_pt:
+  lint_pr:
     name: Lint PR on upload
     runs-on: ubuntu-latest
     needs: cancel_previous
