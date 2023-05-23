@@ -100,13 +100,13 @@ module Fastlane
             key: :vendor_number,
             env_name: "FL_DOWNLOAD_REVIEWS_FROM_APP_STORE_CONNECT_VENDOR_NUMBER",
             description: "Vendor number from Apple Store Connect",
-            type: Integer
+            type: Integer,
           ),
           FastlaneCore::ConfigItem.new(
             key: :app_id,
             env_name: "FL_DOWNLOAD_REVIEWS_FROM_APP_STORE_CONNECT_APP_ID",
             description: "App id from Apple Store Connect",
-            type: String
+            type: String,
           ),
           FastlaneCore::ConfigItem.new(
             key: :filter_by_date,

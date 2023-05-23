@@ -1,9 +1,34 @@
 # frozen_string_literal: true
 
 class SalesAndReports
-  attr_reader :provider, :provider_country, :sku, :developer, :title, :version, :product_type_identifier, :units, :developer_proceeds, :begin_date,
-    :end_date, :customer_currency, :country_code, :currency_of_proceeds, :apple_identifier, :customer_price, :promo_code, :parent_identifier, :subscription,
-    :period, :category, :cmb, :device, :supported_platforms, :proceeds_reason, :preserved_pricing, :client, :order_type
+  attr_reader :provider,
+    :provider_country,
+    :sku,
+    :developer,
+    :title,
+    :version,
+    :product_type_identifier,
+    :units,
+    :developer_proceeds,
+    :begin_date,
+    :end_date,
+    :customer_currency,
+    :country_code,
+    :currency_of_proceeds,
+    :apple_identifier,
+    :customer_price,
+    :promo_code,
+    :parent_identifier,
+    :subscription,
+    :period,
+    :category,
+    :cmb,
+    :device,
+    :supported_platforms,
+    :proceeds_reason,
+    :preserved_pricing,
+    :client,
+    :order_type
 
   def initialize(provider, provider_country, sku, developer, title,
     version, product_type_identifier, units, developer_proceeds, begin_date,

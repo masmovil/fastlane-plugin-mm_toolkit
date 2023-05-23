@@ -97,7 +97,7 @@ module Fastlane
             key: :vendor_number,
             env_name: "FL_DOWNLOAD_SALES_AND_REPORTS_FROM_APP_STORE_CONNECT_VENDOR_NUMBER",
             description: "Vendor number from Apple Store Connect",
-            type: Integer
+            type: Integer,
           ),
         ]
       end
