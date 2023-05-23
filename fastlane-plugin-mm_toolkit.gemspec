@@ -28,9 +28,9 @@ Gem::Specification.new do |spec|
   spec.add_dependency("redcarpet", ">= 3.5.1")
 
   spec.add_development_dependency("danger")
-  spec.add_development_dependency("pry")
   spec.add_development_dependency("danger-rubocop")
   spec.add_development_dependency("fastlane")
+  spec.add_development_dependency("pry")
   spec.add_development_dependency("rubocop")
   spec.add_development_dependency("rubocop-shopify")
 end
