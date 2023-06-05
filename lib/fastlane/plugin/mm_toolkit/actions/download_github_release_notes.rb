@@ -24,7 +24,6 @@ module Fastlane
       # @!group support functions
       #####################################################
 
-      # rubocop:disable Metrics/ParameterLists
       def self.download_release_notes(api_token, api_bearer, server_url, repository_name, download_folder_path,
         releases_only, file_name_callback)
         UI.important("Downloading release notes of #{repository_name}")
@@ -50,7 +49,6 @@ module Fastlane
 
         UI.success("Succesfully downloaded #{releases.count} release note(s) from #{repository_name}!")
       end
-      # rubocop:enable Metrics/ParameterLists
 
       def self.get_all_releases(api_token, api_bearer, server_url, repository_name)
         releases_result = []

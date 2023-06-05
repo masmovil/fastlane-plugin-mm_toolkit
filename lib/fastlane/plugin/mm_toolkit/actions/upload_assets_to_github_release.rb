@@ -19,7 +19,6 @@ module Fastlane
       # @!group support functions
       #####################################################
 
-      # rubocop:disable Metrics/ParameterLists
       def self.upload_assets_to_release(api_token, api_bearer, server_url, repository_name, version, assets)
         UI.important("Updating release of #{repository_name} on version #{version} with upload assets: #{assets}.")
 
@@ -67,7 +66,6 @@ module Fastlane
           return get_result[:json]
         end
       end
-      # rubocop:enable Metrics/ParameterLists
 
       def self.upload_assets(assets, upload_url_template, api_token, api_bearer)
         assets.each do |asset|

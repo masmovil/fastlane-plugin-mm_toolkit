@@ -8,8 +8,8 @@ require "fastlane/plugin/mm_toolkit/version"
 Gem::Specification.new do |spec|
   spec.name          = "fastlane-plugin-mm_toolkit"
   spec.version       = Fastlane::MmToolkit::VERSION
-  spec.authors       = ["Sebastián Varela", "Adrián García"]
-  spec.email         = ["sebastian.varela@masmovil.com", "adrian.garcia@masmovil.com"]
+  spec.authors       = ["Sebastián Varela", "Adrián García", "Raúl Pedraza"]
+  spec.email         = ["sebastian.varela@masmovil.com", "adrian.garcia@masmovil.com", "raul.pedraza@masmovil.com"]
 
   spec.summary       = "MM ToolKit"
   spec.homepage      = "https://github.com/masmovil/fastlane-plugin-mm_toolkit"
@@ -24,7 +24,10 @@ Gem::Specification.new do |spec|
   # spec.add_dependency 'your-dependency', '~> 1.0.0'
 
   spec.add_dependency("addressable", ">= 2.8.0")
+  spec.add_dependency("csv")
   spec.add_dependency("down")
+  spec.add_dependency("google-cloud-bigquery")
+  spec.add_dependency("httparty", "~> 0.21.0")
   spec.add_dependency("redcarpet", ">= 3.5.1")
 
   spec.add_development_dependency("danger")
