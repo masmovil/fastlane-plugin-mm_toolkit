@@ -39,7 +39,7 @@ module Fastlane
           UI.important("HEAD is already tagged as #{head_tag}, no new tag is needed")
         elsif Gem::Version.new(latest_version) < Gem::Version.new(weekly_version)
           new_tag_created = true
-          latest_tag = "v#{weekly_version}"
+          latest_tag = weekly_version
           latest_version = weekly_version
           output_year = week_data[:year].to_i
           output_week_of_year = week_data[:week_of_year].to_i
@@ -71,7 +71,7 @@ module Fastlane
             UI.success("New tag pushed to repo!")
           end
         else
-          latest_tag = "v#{latest_version}"
+          latest_tag = latest_version
           UI.important("No new tag is needed, we are on the correct train 🚂")
         end
 
@@ -116,7 +116,7 @@ module Fastlane
       end
 
       def self.get_version_from_latest_git_tag_from_branch
-        Actions.get_latest_version_from_branch
+        Actions.get_latest_tag_from_branch
       end
 
       def self.get_commit_count_in_head_from_git
@@ -142,7 +142,7 @@ module Fastlane
       def self.details
         "The action generates tags based on the week of the year. The syntax of the generated tags (and the tags the action expect "\
           "as input) is as follows: "\
-          "\nv[two_digit_year].[two_digit_week].0"\
+          "\n[two_digit_year].[two_digit_week].0"\
           "\nThe tag conforms to ISO-8601 standard to calculate weeks between a year: this means that the first week of the year will be "\
           "the one that contains the first Thursday"
       end
