@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "./review"
+require_relative "review"
 require "json"
 require "date"
 

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "./review"
+require_relative "review"
 
 class Reviews
   attr_reader :data, :links, :meta

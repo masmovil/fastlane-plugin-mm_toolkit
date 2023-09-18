@@ -3,9 +3,9 @@
 require "httparty"
 require "jwt"
 require "date"
-require_relative "./sales_and_reports_collection"
-require_relative "./reviews"
-require_relative "./customer_reviews"
+require_relative "sales_and_reports_collection"
+require_relative "reviews"
+require_relative "customer_reviews"
 
 class AppStoreConnectAPI
   attr_reader :issuer_id, :key_id, :private_key_content, :vendor_number
