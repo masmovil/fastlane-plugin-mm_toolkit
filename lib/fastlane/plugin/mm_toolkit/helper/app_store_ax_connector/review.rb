@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require_relative "./review_attributes"
-require_relative "./review_relationships"
+require_relative "review_attributes"
+require_relative "review_relationships"
 
 class Review
   attr_reader :type, :id, :attributes, :relationships

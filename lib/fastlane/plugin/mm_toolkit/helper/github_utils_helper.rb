@@ -6,7 +6,7 @@ module Fastlane
   module Helper
     class GithubUtilsHelper
       GITHUB_BASE_URL = "https://www.github.com"
-      URL_REGEX = /\A#{URI.regexp(['http', 'https'])}\z/
+      URL_REGEX = /\A#{URI.regexp(["http", "https"])}\z/
 
       def self.compose_github_url(url)
         if url =~ URL_REGEX
