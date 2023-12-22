@@ -129,7 +129,7 @@ module Fastlane
           "git describe --abbrev=0 --tags"
         end
 
-        sh(command)
+        sh(command).chomp
       end
 
       #####################################################
