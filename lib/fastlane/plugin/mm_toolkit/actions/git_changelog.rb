@@ -18,7 +18,7 @@ module Fastlane
               from, to = params[:between]
             end
           else
-            from = Actions.last_git_tag_name(params[:match_lightweight_tag], params[:tag_match_pattern])
+            from = get_latest_git_tag(params[:check_all_repo])
             UI.verbose("Found the last Git tag: #{from}")
             to = "HEAD"
           end
@@ -122,6 +122,16 @@ module Fastlane
         changelog_texts.join("\n")
       end
 
+      def self.get_latest_git_tag(check_all_repo)
+        command = if check_all_repo
+          "git describe --tags `git rev-list --tags --max-count=1`"
+        else
+          "git describe --abbrev=0 --tags"
+        end
+
+        sh(command)
+      end
+
       #####################################################
       # @!group Documentation
       #####################################################
@@ -196,20 +206,6 @@ module Fastlane
             type: Boolean,
           ),
           FastlaneCore::ConfigItem.new(
-            key: :tag_match_pattern,
-            env_name: "FL_GIT_CHANGELOG_TAG_MATCH_PATTERN",
-            description: "A glob(7) pattern to match against when finding the last git tag",
-            optional: true,
-          ),
-          FastlaneCore::ConfigItem.new(
-            key: :match_lightweight_tag,
-            env_name: "FL_GIT_CHANGELOG_MATCH_LIGHTWEIGHT_TAG",
-            description: "Whether or not to match a lightweight tag when searching for the last one",
-            optional: true,
-            default_value: true,
-            type: Boolean,
-          ),
-          FastlaneCore::ConfigItem.new(
             key: :quiet,
             env_name: "FL_GIT_CHANGELOG_TAG_QUIET",
             description: "Whether or not to disable changelog output",
@@ -259,6 +255,14 @@ module Fastlane
             type: Hash,
             default_value: {},
           ),
+          FastlaneCore::ConfigItem.new(
+            key: :check_all_repo,
+            env_name: "FL_GIT_CHANGELOG_CHECK_ALL_REPO",
+            description: "Check the whole repo history instead of the currently checked-out branch",
+            optional: true,
+            default_value: false,
+            type: Boolean,
+          ),
         ]
       end
       # rubocop:enable Layout/LineLength
@@ -287,7 +291,6 @@ module Fastlane
                 between: ["7b092b3", "HEAD"],            # Optional, lets you specify a revision/tag range between which to collect commit info
                 pretty: "- (%ae) %s",                    # Optional, lets you provide a custom format to apply to each commit when generating the changelog text
                 date_format: "short",                    # Optional, lets you provide an additional date format to dates within the pretty-formatted string
-                match_lightweight_tag: false,            # Optional, lets you ignore lightweight (non-annotated) tags when searching for the last tag
                 merge_commit_filtering: "exclude_merges"  # Optional, lets you filter out merge commits
                 replace_patterns: {                      # Optional, lets you add replace patterns
                     /(\w+)/ => \'Hello \1\'
