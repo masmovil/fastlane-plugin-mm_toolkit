@@ -170,7 +170,7 @@ module Fastlane
           FastlaneCore::ConfigItem.new(
             key: :committer_name,
             env_name: "FL_TAG_TRAIN_COMMITTER_NAME",
-            description: "Indicates the name of the commiter of the tag",
+            description: "Indicates the name of the committer of the tag",
             type: String,
             optional: true,
             default_value: "tag-train",
@@ -178,7 +178,7 @@ module Fastlane
           FastlaneCore::ConfigItem.new(
             key: :committer_email,
             env_name: "FL_TAG_TRAIN_COMMITTER_EMAIL",
-            description: "Indicates the e-mail of the commiter of the tag",
+            description: "Indicates the e-mail of the committer of the tag",
             type: String,
             optional: true,
             default_value: "tag-train@tag-train.com",
@@ -186,10 +186,10 @@ module Fastlane
           FastlaneCore::ConfigItem.new(
             key: :reference_date,
             env_name: "FL_TAG_TRAIN_REFERENCE_DATE",
-            description: "Indicates the reference date for the tag in YYYY-MM-DD format. Defaults to today's date",
+            description: "Indicates the reference date for the tag in YYYY-MM-DD format. Defaults to next week's date",
             type: String,
             optional: true,
-            default_value: Time.now.strftime("%F"),
+            default_value: (Time.now + (60 * 60 * 24 * 7)).strftime("%F"),
           )
         ]
       end
