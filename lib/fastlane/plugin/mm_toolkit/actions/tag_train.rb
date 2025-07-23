@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require 'date'
 
 module Fastlane
   module Actions
@@ -18,12 +19,14 @@ module Fastlane
         committer_name = params.fetch(:committer_name)
         committer_email = params.fetch(:committer_email)
         push_to_repo = params.fetch(:push_to_repo)
+        reference_date_string = params.fetch(:reference_date)
+        reference_date = Date.parse(reference_date_string)
 
         UI.message("Reading current tags…")
         latest_version = get_version_from_latest_git_tag_from_branch
         head_tag = get_head_tag_from_git
-        week_data = get_week_data
-        weekly_version = get_weekly_version
+        week_data = get_week_data(reference_date)
+        weekly_version = get_weekly_version(reference_date)
 
         head_already_tagged = false
         new_tag_created = false
@@ -100,17 +103,16 @@ module Fastlane
       # @!group support functions
       #####################################################
 
-      def self.get_week_data
-        date = Date.today
+      def self.get_week_data(reference_date)
         # Using ISO-8601 week-based year and week number.
-        two_digit_year = date.strftime("%g").to_i
-        two_digit_week_of_year = date.strftime("%V").to_i
+        two_digit_year = reference_date.strftime("%g").to_i
+        two_digit_week_of_year = reference_date.strftime("%V").to_i
 
         { year: two_digit_year, week_of_year: two_digit_week_of_year }
       end
 
-      def self.get_weekly_version
-        week_data = get_week_data
+      def self.get_weekly_version(reference_date)
+        week_data = get_week_data(reference_date)
 
         "#{week_data[:year]}.#{week_data[:week_of_year]}.0"
       end
@@ -168,7 +170,7 @@ module Fastlane
           FastlaneCore::ConfigItem.new(
             key: :committer_name,
             env_name: "FL_TAG_TRAIN_COMMITTER_NAME",
-            description: "Indicates the name of the commiter of the tag",
+            description: "Indicates the name of the committer of the tag",
             type: String,
             optional: true,
             default_value: "tag-train",
@@ -176,11 +178,19 @@ module Fastlane
           FastlaneCore::ConfigItem.new(
             key: :committer_email,
             env_name: "FL_TAG_TRAIN_COMMITTER_EMAIL",
-            description: "Indicates the e-mail of the commiter of the tag",
+            description: "Indicates the e-mail of the committer of the tag",
             type: String,
             optional: true,
             default_value: "tag-train@tag-train.com",
           ),
+          FastlaneCore::ConfigItem.new(
+            key: :reference_date,
+            env_name: "FL_TAG_TRAIN_REFERENCE_DATE",
+            description: "Indicates the reference date for the tag in YYYY-MM-DD format. Defaults to next week's date",
+            type: String,
+            optional: true,
+            default_value: (Time.now + (60 * 60 * 24 * 7)).strftime("%F"),
+          )
         ]
       end
 
