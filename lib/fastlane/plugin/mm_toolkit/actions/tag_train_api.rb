@@ -138,7 +138,7 @@ module Fastlane
 
       def self.gh_get(token, path)
         other_action.github_api(
-          api_token: token,
+          api_bearer: token,
           http_method: "GET",
           path: path,
         )[:json]
@@ -146,7 +146,7 @@ module Fastlane
 
       def self.gh_post(token, path, body)
         other_action.github_api(
-          api_token: token,
+          api_bearer: token,
           http_method: "POST",
           path: path,
           body: body,
@@ -155,7 +155,7 @@ module Fastlane
 
       def self.gh_patch(token, path, body)
         other_action.github_api(
-          api_token: token,
+          api_bearer: token,
           http_method: "PATCH",
           path: path,
           body: body,
